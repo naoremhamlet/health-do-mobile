@@ -3,10 +3,11 @@ import { Animated, TouchableHighlight, View, Text, Image, StyleSheet, Pressable 
 import { COLORS, SIZES, image } from '../constants'
 import { Entypo, FontAwesome } from '@expo/vector-icons'
 
-export default function HorizonatalProduct({ item }) {
+export default function HorizonatalProduct({ item, navigation }) {
+
   return (
     <TouchableHighlight
-        onPress={() => console.log('You touched me')}
+        onPress={() => navigation.navigate("ProductDetail", {id: item.id})}
         style={styles.container}
     >
         <View style={styles.itemContainer}>
@@ -17,11 +18,15 @@ export default function HorizonatalProduct({ item }) {
             </View>
             {item.quantity && 
                 <View style={styles.quantityContainer}>
-                    <Pressable>
+                    <Pressable onPress={() => {
+                        item.quantity -= 1
+                    }}>
                         <FontAwesome name='minus' size={12} color="white" />
                     </Pressable>
                     <Text style={styles.itemQuantity}>{item.quantity}</Text>
-                    <Pressable>
+                    <Pressable onPress={() => {
+                        item.quantity += 1
+                    }}>
                         <FontAwesome name='plus' size={12} color="white" />
                     </Pressable>
                 </View>

@@ -1,13 +1,12 @@
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
 import { useRoute } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { Text, View, Pressable, StyleSheet, Image, ScrollView } from 'react-native'
+import { Text, View, Pressable, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS, SIZES, image } from '../constants'
 import Swiper from 'react-native-swiper'
 import CustomButton from '../components/CustomButton'
 import Checkbox from 'expo-checkbox';
-import { FlatList } from 'react-native-gesture-handler'
 
 
 const images = [{id:1}, {id: 2}, {id: 3}]
@@ -15,9 +14,9 @@ const images = [{id:1}, {id: 2}, {id: 3}]
 const Top = ({navigation}) => {
     return (
         <View style={styles.topContainer}>
-            <Pressable onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Octicons name='chevron-left' size={24} color="black" />
-            </Pressable>
+            </TouchableOpacity>
             <Pressable>
                 <MaterialIcons name='favorite' size={24} color={COLORS.primary} />
             </Pressable>
@@ -55,7 +54,7 @@ const Info = ({title, desc}) => {
 const Customization = ({customIn, setCustomIn, ingredients, inLength, setInLength}) => {
 
     return (
-        <View style={{ marginTop: 30, marginBottom: 100}}>
+        <View style={{ marginVertical: 35 }}>
            <Text style={styles.infoTitle}>Ingredients</Text>
 
             <View style={{alignItems:'center', display:'flex', flexDirection:'row',flexWrap:"wrap"}}>
@@ -129,7 +128,7 @@ export default function ProductDetail({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingVertical: 50,
+        paddingTop: 50,
         paddingHorizontal: 35
     },
     topContainer: {

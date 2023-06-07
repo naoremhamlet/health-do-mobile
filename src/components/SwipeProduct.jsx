@@ -5,12 +5,12 @@ import { COLORS } from '../constants';
 import HorizonatalProduct from './HorizonatalProduct';
 
 
-export default function SwipeProduct({ data, buttons }) {
+export default function SwipeProduct({ data, buttons, navigation }) {
     const [listData, setListData] = useState(data);
 
     const renderItem = ({item}) => ( 
         <Animated.View style={{height: 120}}>
-            <HorizonatalProduct item={item} />
+            <HorizonatalProduct item={item} navigation={navigation} />
         </Animated.View>
     );
 

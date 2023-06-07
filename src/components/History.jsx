@@ -9,13 +9,13 @@ const data = [{id: 1}, {id: 2},{id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}]
 export default function History({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
-      <TopHeader title="History" navigation={navigation} />
+      <TopHeader title="History" goto={() => navigation.goBack()} />
       <FlatList
         style={{marginTop: 30}}
         data={data}
         numColumns={2}
-        columnWrapperStyle="row"
-        renderItem={() => <ProductSmall />}
+        // columnWrapperStyle="row"
+        renderItem={(item) => <ProductSmall item={item.item} navigation={navigation} />}
         keyExtractor={item => item.id}
       />
     </SafeAreaView>

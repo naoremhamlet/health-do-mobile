@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, TextInput, Image } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native'
 import { COLORS, SIZES, image } from '../constants'
 import { Card } from 'react-native-shadow-cards';
 import CustomButton from '../components/CustomButton';
@@ -37,7 +37,9 @@ function Form() {
                 containerStyle={styles.otpContainer}
                 textInputStyle={styles.otpInput} /> */}
             <OTPContainer />
-            <Text style={styles.resend}>Resend OTP?</Text>
+            <TouchableOpacity>
+                <Text style={styles.resend}>Resend OTP?</Text>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         padding: 50,
-        width: '100%'
+        width: '100%',
     },
 
     formLabel: {

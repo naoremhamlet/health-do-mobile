@@ -10,7 +10,7 @@ const data = [{id: 1}, {id: 2}, {id: 3}]
 export default function Favourite({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
-      <TopHeader title="Favourites" navigation={navigation} />
+      <TopHeader title="Favourites" goto={() => navigation.goBack()} />
       <SwipeProduct data={data} 
         buttons={[
           { 

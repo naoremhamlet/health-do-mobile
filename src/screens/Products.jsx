@@ -1,6 +1,6 @@
 import { Octicons } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { StyleSheet, Text, Pressable, View, TextInput, FlatList } from 'react-native'
+import { StyleSheet, Text, Pressable, View, TextInput, FlatList, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { SIZES } from '../constants'
 import ProductSmall from '../components/ProductSmall'
@@ -10,9 +10,9 @@ import { useRoute } from '@react-navigation/native'
 const Top = ({navigation, searchPhrase, setSearchPhrase}) => {
   return (
     <View style={styles.topContainer}>
-        <Pressable onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Octicons name='chevron-left' size={24} color="black" />
-        </Pressable>
+        </TouchableOpacity>
         <TextInput 
           style={styles.input}
           value={searchPhrase}
@@ -33,7 +33,7 @@ export default function Products({navigation}) {
           <Text style={styles.bottomText}>Found 6 results</Text>
           <FlatList 
             numColumns={2}
-            columnWrapperStyle="row"
+            // columnWrapperStyle="row"
             keyExtractor={item => item.id}
             data={[{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]}
             renderItem={(item) => (

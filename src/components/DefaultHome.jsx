@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Pressable, Text, TextInput, StyleSheet, FlatList, ScrollView } from 'react-native'
+import { View, Pressable, Text, TextInput, StyleSheet, FlatList, ScrollView, TouchableOpacity } from 'react-native'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONT, SIZES } from '../constants';
@@ -32,7 +32,7 @@ const ProductSection = ({ active="Salads", setActive, navigation }) => {
           showsHorizontalScrollIndicator={false}
           data={["Salads", "Drinks", "Fruits"]}
           renderItem={(item) => 
-            <Pressable onPress={() => setActive(item.item)}>
+            <TouchableOpacity onPress={() => setActive(item.item)}>
               <Text 
                 style={{...styles.itemList, 
                 borderBottomWidth: active===item.item? 2:0,
@@ -41,7 +41,7 @@ const ProductSection = ({ active="Salads", setActive, navigation }) => {
               }} >
                   {item.item}
               </Text>
-            </Pressable>}
+            </TouchableOpacity>}
         />
       </View>
       <View style={{ marginTop: 50}}>
@@ -54,12 +54,12 @@ const ProductSection = ({ active="Salads", setActive, navigation }) => {
 const HeaderIcon = ({navigation}) => {
   return (
     <View style={styles.headerIconContainer}>
-      <Pressable onPress={() => navigation.openDrawer()}>
+      <TouchableOpacity onPress={() => navigation.openDrawer()}>
         <MaterialIcons name="menu" size={24} color="black" />
-      </Pressable>
-      <Pressable onPress={() => navigation.navigate("Cart")}>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
         <Ionicons name="cart-outline" size={24} color="black" />
-      </Pressable>
+      </TouchableOpacity>
     </View>
   )
 }

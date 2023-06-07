@@ -16,6 +16,7 @@ import { MaterialIcons, MaterialCommunityIcons, Ionicons } from '@expo/vector-ic
 import Favourite from '../components/Favourite';
 import Account from '../components/Account';
 import History from '../components/History';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 
@@ -26,13 +27,29 @@ function BottomTab({navigation}) {
     <Tab.Navigator screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
         if (route.name === 'Homepage') {
-          return <MaterialCommunityIcons name={focused?'home':'home-outline'} size={size} color={color} />
+          return (
+            <TouchableOpacity>
+              <MaterialCommunityIcons name={focused?'home':'home-outline'} size={size} color={color} />
+            </TouchableOpacity>
+          )
         } else if (route.name === 'Favorite') {
-          return <MaterialIcons name={focused?'favorite':'favorite-outline'} size={size-2} color={color} />;
+          return (
+            <TouchableOpacity>
+              <MaterialIcons name={focused?'favorite':'favorite-outline'} size={size-2} color={color} />
+            </TouchableOpacity>
+          )
         } else if (route.name === 'Account') {
-          return <Ionicons name={focused?'person':'person-outline'} size={size-3} color={color} />
+          return (
+            <TouchableOpacity>
+              <Ionicons name={focused?'person':'person-outline'} size={size-3} color={color} />        
+            </TouchableOpacity>
+          )
         } else if (route.name === 'History') {
-          return <MaterialIcons name="history" size={size} color={color} />
+          return (
+            <TouchableOpacity>
+              <MaterialIcons name="history" size={size} color={color} />  
+            </TouchableOpacity>
+          )
         }
       },
       tabBarActiveTintColor: COLORS.primary,
@@ -57,10 +74,10 @@ function BottomTab({navigation}) {
 
 function SignOut({ signOut }) {
   return (
-    <Pressable style={styles.signoutcontainer} onPress={signOut}>
+    <TouchableOpacity style={styles.signoutcontainer} onPress={signOut}>
       <Text style={styles.signouttext}>Sign-out</Text>
       <MaterialIcons name='arrow-right-alt' size={24} color={COLORS.white} />
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 
