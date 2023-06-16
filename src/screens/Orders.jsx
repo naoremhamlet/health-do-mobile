@@ -2,7 +2,6 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import TopHeader from '../components/TopHeader'
 import { Image, StyleSheet,Text,TouchableHighlight,View } from 'react-native'
-import SwipeProduct from '../components/SwipeProduct'
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import CustomButton from '../components/CustomButton'
 import { image } from '../constants'
@@ -27,9 +26,9 @@ export default function Orders({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
         <TopHeader title="Orders" goto={() => navigation.goBack()} />
-        <TouchableHighlight style={styles.container} >
+        {/* <TouchableHighlight style={styles.container} >
             <Item />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
          {/* <CustomButton title="Checkout" goto={() => navigation.navigate("Checkout")} /> */}
     </SafeAreaView>
   )

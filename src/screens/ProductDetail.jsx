@@ -4,22 +4,41 @@ import React, { useState } from 'react'
 import { Text, View, Pressable, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS, SIZES, image } from '../constants'
-import Swiper from 'react-native-swiper'
+import Swiper from 'react-native-swiper/src'
 import CustomButton from '../components/CustomButton'
 import Checkbox from 'expo-checkbox';
+import { useDispatch, useSelector } from 'react-redux'
+import { updateFavourites } from '../store/reducer/favourites'
+import { updateCart } from '../store/reducer/cart'
 
 
 const images = [{id:1}, {id: 2}, {id: 3}]
 
-const Top = ({navigation}) => {
+const Top = ({navigation, id}) => {
+    const favourites = useSelector(state => state.favourites.favourites)
+    const dispatch = useDispatch()
+
+
+    const toggleFavourite = () => {
+        if(favourites.filter(el => el.id==id).length) {
+            const newFavs = favourites.filter(el => el.id != id)
+            dispatch(updateFavourites(newFavs))
+        } else {
+            const newFavs = [...favourites, {id:id}]
+            dispatch(updateFavourites(newFavs))
+        }
+    }
+    
+    const containInFav = favourites.filter(el => el.id==id).length
+
     return (
         <View style={styles.topContainer}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Octicons name='chevron-left' size={24} color="black" />
             </TouchableOpacity>
-            <Pressable>
-                <MaterialIcons name='favorite' size={24} color={COLORS.primary} />
-            </Pressable>
+            <TouchableOpacity onPress={toggleFavourite}>
+                <MaterialIcons name={containInFav? 'favorite' : 'favorite-outline'} size={24} color={COLORS.primary} />
+            </TouchableOpacity>
         </View>
     )
 }
@@ -89,12 +108,16 @@ const Customization = ({customIn, setCustomIn, ingredients, inLength, setInLengt
 export default function ProductDetail({navigation}) {
     const route = useRoute()
     const ingredients = ["Avocado", "Tortilla Chips", "Blackened Chicken", "Tomato", "Raw Carrot", "Hot Sauce", "Baby Spinach"]
+    const cart = useSelector(state => state.cart.cart)
+    const dispatch = useDispatch()
+    const containInCart = cart.filter(el => el.id != route.params.id)
+
     const [customIn, setCustomIn] = useState(ingredients)
     const [inLength, setInLength] = useState(ingredients.length)
     
     return (
         <SafeAreaView style={styles.container}>
-            <Top navigation={navigation} />
+            <Top navigation={navigation} id={route.params.id} />
             <ScrollView showsVerticalScrollIndicator={false}>
 
                 <Images />
@@ -119,7 +142,16 @@ export default function ProductDetail({navigation}) {
                     setInLength={setInLength}
                  />
             </ScrollView>
-            <CustomButton title="Add to Cart" goto={() => navigation.navigate("Cart")} />
+            <CustomButton 
+                additionalStyle={{ opacity: containInCart? 0.5 : 1}}
+                title="Add to Cart" 
+                goto={() => { 
+                    if(!containInCart) {
+                        const newCart = [...cart, { id: route.params.id, quantity: 1}]
+                        dispatch(updateCart(newCart))
+                    } 
+                }}
+            />
         </SafeAreaView>
     )
 }

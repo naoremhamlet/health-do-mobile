@@ -3,7 +3,7 @@ import { Animated, TouchableHighlight, View, Text, Image, StyleSheet, Pressable 
 import { COLORS, SIZES, image } from '../constants'
 import { Entypo, FontAwesome } from '@expo/vector-icons'
 
-export default function HorizonatalProduct({ item, navigation }) {
+export default function HorizonatalProduct({ item, navigation, increaseQuantity, decreaseQuantity }) {
 
   return (
     <TouchableHighlight
@@ -18,15 +18,11 @@ export default function HorizonatalProduct({ item, navigation }) {
             </View>
             {item.quantity && 
                 <View style={styles.quantityContainer}>
-                    <Pressable onPress={() => {
-                        item.quantity -= 1
-                    }}>
+                    <Pressable onPress={() => decreaseQuantity(item.id)}>
                         <FontAwesome name='minus' size={12} color="white" />
                     </Pressable>
                     <Text style={styles.itemQuantity}>{item.quantity}</Text>
-                    <Pressable onPress={() => {
-                        item.quantity += 1
-                    }}>
+                    <Pressable onPress={() => increaseQuantity(item.id)}>
                         <FontAwesome name='plus' size={12} color="white" />
                     </Pressable>
                 </View>

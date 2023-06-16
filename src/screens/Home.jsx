@@ -17,6 +17,7 @@ import Favourite from '../components/Favourite';
 import Account from '../components/Account';
 import History from '../components/History';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Orders from './Orders';
 
 
 
@@ -155,7 +156,7 @@ export default function Home() {
             <MaterialCommunityIcons name='account-circle-outline' size={size} color={color} />
           ) 
         }} />
-        <Drawer.Screen name="Order" component={BottomTab} options={{
+        <Drawer.Screen name="Order" component={Orders} options={{
           drawerIcon: ({focused, size, color}) => (
             <MaterialCommunityIcons name='cart-check' size={size} color={color} />
           ) 

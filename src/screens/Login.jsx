@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native'
 import { COLORS, SIZES, image } from '../constants'
 import { Card } from 'react-native-shadow-cards';
@@ -15,12 +15,44 @@ function TopSection() {
 }
 
 function OTPContainer() {
+
+    const ref1 = useRef()
+    const ref2 = useRef()
+    const ref3 = useRef()
+    const ref4 = useRef()
+
+
     return (
         <View style={styles.otpContainer}>
-            <TextInput style={styles.otpInput} keyboardType='numeric' maxLength={1} />
-            <TextInput style={styles.otpInput} keyboardType='numeric' maxLength={1} />
-            <TextInput style={styles.otpInput} keyboardType='numeric' maxLength={1} />
-            <TextInput style={styles.otpInput} keyboardType='numeric' maxLength={1} />
+            <TextInput 
+                ref={ref1}
+                onChangeText={() => {
+                    ref2.current.focus()
+                }}
+                style={styles.otpInput} 
+                keyboardType='numeric' 
+                maxLength={1} />
+            <TextInput 
+                ref={ref2}
+                onChangeText={() => {
+                    ref3.current.focus()
+                }}
+                style={styles.otpInput} 
+                keyboardType='numeric' 
+                maxLength={1} />
+            <TextInput 
+                ref={ref3}
+                onChangeText={() => {
+                    ref4.current.focus()
+                }}
+                style={styles.otpInput} 
+                keyboardType='numeric' 
+                maxLength={1} />
+            <TextInput 
+                ref={ref4}
+                style={styles.otpInput} 
+                keyboardType='numeric' 
+                maxLength={1} />
         </View>
     )
 }
@@ -29,16 +61,23 @@ function Form() {
     return (
         <View style={styles.formContainer}>
             <Text style={styles.formLabel}>Mobile Number</Text>
-            <TextInput
-                style={styles.mobileInput}
-                keyboardType='numeric' />
+            <View style={styles.mobileContainer}>
+                <Text style={styles.mobilePlaceholder}>+91</Text>
+                <TextInput
+                    onSubmitEditing={() => {
+                        alert("OTP Sent")
+                    }}
+                    maxLength={10}
+                    style={styles.mobileInput}
+                    keyboardType='numeric' />
+            </View>
             <Text style={styles.formLabel}>OTP</Text>
             {/* <OTPTextInput 
                 containerStyle={styles.otpContainer}
                 textInputStyle={styles.otpInput} /> */}
             <OTPContainer />
             <TouchableOpacity>
-                <Text style={styles.resend}>Resend OTP?</Text>
+                <Text style={styles.resend} onPress={() => alert("OTP Resend")}>Resend OTP?</Text>
             </TouchableOpacity>
         </View>
     )
@@ -97,14 +136,24 @@ const styles = StyleSheet.create({
         fontWeight: 900,
         opacity: 0.4,
     },
-
+    mobileContainer: {
+        position: 'relative'
+    },
+    mobilePlaceholder: {
+        position: 'absolute',
+        left: 0,
+        top: 8,
+        fontSize: SIZES.medium,
+        alignSelf:'center'
+    },
     mobileInput: {
         borderBottomWidth: 1,
+        borderColor: "#00000050",
         marginBottom: 50,
         paddingVertical: 5,
         fontSize: SIZES.medium,
+        paddingLeft: 35
     },
-
     otpContainer: {
         padding: 0,
         display: 'flex',

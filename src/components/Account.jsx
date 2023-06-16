@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, View, StyleSheet, Image, Pressable, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { FontAwesome5, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
 import TopHeader from './TopHeader';
 import { COLORS, SIZES, image } from '../constants';
 import { AddressPopup } from './Popup/AddressPopup';
-import { MyAddresssPopup } from './Popup/MyAddressPopup';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateAccount } from '../store/reducer/account';
+// import { MyAddresssPopup } from './Popup/MyAddressPopup';
 
 const Detail = ({detail}) => {
   return (
@@ -17,10 +19,10 @@ const Detail = ({detail}) => {
         </Pressable>
       </View>
       <View style={styles.detailDetails}>
-        <Text style={styles.detailName}>Naorem Hemlet Singh</Text>
-        <Text style={styles.detailText}>+91 9366309563</Text>
-        <Text style={styles.detailText}>naoremhamlet@gmail.com</Text>
-        <Text style={styles.detailText}>Nambol Naorem, Near Community Hall</Text>
+        <Text style={styles.detailName}>{detail.name}</Text>
+        <Text style={styles.detailText}>{detail.phone}</Text>
+        <Text style={styles.detailText}>{detail.email}</Text>
+        <Text style={styles.detailText}>{detail.address}</Text>
       </View>
     </View>
   )
@@ -39,6 +41,19 @@ export default function Account({ navigation }) {
 
   const [active, setActive] = useState()
 
+  const detail = useSelector(state => state.account.detail)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const accountDetail = {
+      name: "Naorem Hemlet Singh",
+      phone: "+91 9366309563",
+      email: "naoremhamlet@gmail.com",
+      address: "Nambol Naorem, Near Community Hall"
+    }
+
+    dispatch(updateAccount({id: 1, detail: accountDetail}))
+  }, [])
 
   if(active==="EditAccountAddress")
     return <AddressPopup 
@@ -58,8 +73,8 @@ export default function Account({ navigation }) {
           <FontAwesome5 name="edit" size={20} color="black" />
         </TouchableOpacity> 
       </View>
-      <Detail />
-      <RectangleItem name={"Orders"} />
+      <Detail detail={detail} />
+      <RectangleItem name={"Orders"} press={() => navigation.navigate("Orders")} />
       <RectangleItem name={"Favourites"} />
       <RectangleItem name={"FAQ"} />
       <RectangleItem name={"Help"} />
