@@ -9,6 +9,7 @@ import { COLORS } from '../constants'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { updateFavourites } from '../store/reducer/favourites'
 import { updateCart } from '../store/reducer/cart'
+import Error from './Error'
 
 
 function SwipeProduct({ navigation }) {
@@ -80,10 +81,21 @@ function SwipeProduct({ navigation }) {
 }
 
 export default function Favourite({navigation}) {
+  const favourites = useSelector(state => state.favourites.favourites)
+
   return (
     <SafeAreaView style={styles.container}>
       <TopHeader title="Favourites" goto={() => navigation.goBack()} />
-      <SwipeProduct navigation={navigation} />
+      {favourites && favourites.length <= 0 &&
+        <Error
+          icon={<MaterialCommunityIcons name="basket-off" size={120} color="#00000025" />}
+          title="No favourites added"
+          desc="Products you mark as favourites appear here."
+        />
+      }
+      {favourites && favourites.length > 0 &&
+        <SwipeProduct navigation={navigation} />
+      }
     </SafeAreaView>
   )
 }
@@ -91,6 +103,7 @@ export default function Favourite({navigation}) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingVertical: 50,
     paddingHorizontal: 35
   },

@@ -3,7 +3,6 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { COLORS, SHADOWS, SIZES, image } from '../constants'
 
 export default function ProductSmall({item, navigation}) {
-
   return (
     <Pressable 
         style={styles.container}

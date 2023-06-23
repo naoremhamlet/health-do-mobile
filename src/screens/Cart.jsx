@@ -10,6 +10,7 @@ import HorizonatalProduct from '../components/HorizonatalProduct'
 import { COLORS } from '../constants'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { updateFavourites } from '../store/reducer/favourites'
+import Error from '../components/Error'
 
 
 
@@ -23,14 +24,14 @@ function SwipeProduct({ navigation }) {
   const increaseQuantity = (id) => {
     const idx = cart.findIndex(el => el.id == id)
     cart[idx].quantity += 1
-    dispatch(updateFavourites(cart))
+    dispatch(updateCart(cart))
     setRerenderCount(rerenderCount+1)
   }
 
   const decreaseQuantity = (id) => {
     const idx = cart.findIndex(el => el.id == id)
     cart[idx].quantity = Math.max(1, parseInt(cart[idx].quantity)-1)
-    dispatch(updateFavourites(cart))
+    dispatch(updateCart(cart))
     setRerenderCount(rerenderCount+1)
   }
 
@@ -104,13 +105,29 @@ function SwipeProduct({ navigation }) {
 
 export default function Cart({ navigation }) {
 
+  const cart = useSelector(state => state.cart.cart)
+
   return (
     <SafeAreaView style={styles.container}>
       <TopHeader title="Cart" goto={() => navigation.goBack()} />
-      <View style={{ marginBottom: 100 }}>
-        <SwipeProduct navigation={navigation} />
-      </View>
-      <CustomButton title="Checkout" goto={() => navigation.navigate("Checkout")} />
+      {cart && cart.length <= 0 &&
+        <Error
+          icon={<MaterialCommunityIcons name="cart-off" size={120} color="#00000025" />}
+          title="No products yet"
+          desc="Please press shopping and add products to cart."
+          isButton={true}
+          buttonFunc={() => navigation.navigate("Homepage")}
+          buttonName="Shopping"
+        />
+      }
+      {cart && cart.length > 0 &&
+        <View style={{ flex: 1}}>
+          <View style={{ marginBottom: 100 }}>
+            <SwipeProduct navigation={navigation} />
+          </View>
+          <CustomButton title="Checkout" goto={() => navigation.navigate("Checkout")} />
+        </View>
+      }
     </SafeAreaView>
   )
 }

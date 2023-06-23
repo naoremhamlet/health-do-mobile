@@ -18,7 +18,6 @@ const Top = ({navigation, id}) => {
     const favourites = useSelector(state => state.favourites.favourites)
     const dispatch = useDispatch()
 
-
     const toggleFavourite = () => {
         if(favourites.filter(el => el.id==id).length) {
             const newFavs = favourites.filter(el => el.id != id)
@@ -110,7 +109,8 @@ export default function ProductDetail({navigation}) {
     const ingredients = ["Avocado", "Tortilla Chips", "Blackened Chicken", "Tomato", "Raw Carrot", "Hot Sauce", "Baby Spinach"]
     const cart = useSelector(state => state.cart.cart)
     const dispatch = useDispatch()
-    const containInCart = cart.filter(el => el.id != route.params.id)
+
+    const containInCart = cart.filter(el => el.id == route.params.id).length
 
     const [customIn, setCustomIn] = useState(ingredients)
     const [inLength, setInLength] = useState(ingredients.length)
