@@ -69,7 +69,7 @@ const Info = ({title, desc}) => {
     )
 }
 
-const Customization = ({customIn, setCustomIn, ingredients, inLength, setInLength}) => {
+const Customization = ({customIn, setCustomIn, ingredients}) => {
 
     return (
         <View style={{ marginVertical: 35 }}>
@@ -90,8 +90,6 @@ const Customization = ({customIn, setCustomIn, ingredients, inLength, setInLengt
                                 }
                                 else
                                     setCustomIn(customIn.filter(d => d!=el))
-
-                                setInLength(customIn.length+1)
                             }}
                          />
                         <Text style={{paddingHorizontal: 5}}>{el}</Text>
@@ -113,7 +111,6 @@ export default function ProductDetail({navigation}) {
     const containInCart = cart.filter(el => el.id == route.params.id).length
 
     const [customIn, setCustomIn] = useState(ingredients)
-    const [inLength, setInLength] = useState(ingredients.length)
     
     return (
         <SafeAreaView style={styles.container}>
@@ -138,8 +135,6 @@ export default function ProductDetail({navigation}) {
                     customIn={customIn}
                     setCustomIn={setCustomIn}
                     ingredients={ingredients}
-                    inLength={inLength}
-                    setInLength={setInLength}
                  />
             </ScrollView>
             <CustomButton 

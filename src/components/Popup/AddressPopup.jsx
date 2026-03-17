@@ -4,6 +4,7 @@ import { COLORS, SIZES } from '../../constants'
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 import { Entypo, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 
 
 const BodyItem = ({icon, placeholder, keyboardtype, value, changeValue}) => {
@@ -26,10 +27,12 @@ const BodyItem = ({icon, placeholder, keyboardtype, value, changeValue}) => {
 
 export const AddressPopup = ({closePopup, type, isEmail}) => {
 
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [address, setAddress] = useState("")
-    const [landmark, setLandmark] = useState("")
+    const detail = useSelector(state => state.account.detail);
+
+    const [name, setName] = useState(detail.name)
+    const [email, setEmail] = useState(detail.email)
+    const [address, setAddress] = useState(detail.address)
+    const [landmark, setLandmark] = useState()
     const [city, setCity] = useState("")
     const [phone, setPhone] = useState("")
     const [pincode, setPincode] = useState("")
