@@ -1,220 +1,345 @@
-// import React from 'react'
-// import { SafeAreaView } from 'react-native-safe-area-context'
-// import TopHeader from '../components/TopHeader'
-// import { Image, StyleSheet, Text, TouchableHighlight, View } from 'react-native'
-// import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
-// import CustomButton from '../components/CustomButton'
-// import { COLORS, SIZES, image } from '../constants'
-// import { TouchableOpacity } from 'react-native-gesture-handler'
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import TopHeader from '../components/TopHeader';
+import CustomButton from '../components/CustomButton';
+import { COLORS, SIZES, SHADOWS, image } from '../constants'; // Using your constants
 
+/**
+ * COMPONENT: Order Details Modal
+ */
+const OrderDetailsPopup = ({ visible, order, onClose }) => {
+  if (!order) return null;
 
-// const Item = () => {
-//   return (
-//     <TouchableHighlight
-//       style={styles.itemContent}
-//     >
-//       <View style={styles.itemContainer}>
-//         <View style={styles.itemTop}>
-//           <Image source={image.item1} style={styles.item} />
-//           <View>
-//             <View>
-//               <Text style={styles.title}>Vegetable Mix Omlete</Text>
-//               <Text style={styles.price}>Rs 160</Text>
-//             </View>
-//           </View>
-//           <Text style={styles.quantity}> X {"4"}</Text>
-//         </View>
-//         <View style={styles.itemBottom}>
-//           <TouchableOpacity style={styles.bottomButton}>
-//             <Text style={styles.button}>Order Status</Text>
-//           </TouchableOpacity>
-//           <TouchableOpacity style={styles.bottomButton}>
-//             <Text style={styles.button}>Cancel</Text>
-//           </TouchableOpacity>
-//         </View>
-//       </View>
+  const isDelivered = order.status === 'delivered';
+  const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const deliveryFee = 40;
 
-//     </TouchableHighlight>
-//   )
-// }
+  return (
+    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <View>
+              <Text style={styles.modalTitle}>Order Summary</Text>
+              <Text style={styles.modalOrderId}>ID: #ORD-{order.id}026</Text>
+            </View>
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+              <Ionicons name="close" size={24} color={COLORS.black} />
+            </TouchableOpacity>
+          </View>
 
-// // const data = [{id: 1, quantity: 1}, {id: 2, quantity: 3},{id: 3, quantity: 1}, {id: 4, quantity: 3},{id: 5, quantity: 1}, {id: 6, quantity: 3},{id: 7, quantity: 1}, {id: 8, quantity: 3},{id: 9, quantity: 1}, {id: 10, quantity: 3}]
-// const data = [{ id: 1, quantity: 1 }, { id: 2, quantity: 3 }]
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {!isDelivered && (
+              <View style={styles.trackingSection}>
+                <View style={styles.trackingRow}>
+                    <FontAwesome5 name="utensils" size={16} color={COLORS.primary} />
+                    <Text style={styles.trackingText}>Restaurant is preparing your food...</Text>
+                </View>
+              </View>
+            )}
 
-// export default function Orders({ navigation }) {
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <TopHeader title="Orders" goto={() => navigation.goBack()} />
-//       <Item />
+            <View style={styles.detailSection}>
+              <Text style={styles.sectionHeading}>Items Ordered</Text>
+              {order.items.map((prod, index) => (
+                <View key={index} style={styles.detailItemRow}>
+                  <View style={{flex: 1}}>
+                    <Text style={styles.detailItemName}>{prod.name}</Text>
+                    <Text style={styles.detailItemQty}>Quantity: {prod.quantity}</Text>
+                  </View>
+                  <Text style={styles.detailItemPrice}>₹{prod.price * prod.quantity}</Text>
+                </View>
+              ))}
+            </View>
 
-//       {/* <CustomButton title="Checkout" goto={() => navigation.navigate("Checkout")} /> */}
-//     </SafeAreaView>
-//   )
-// }
+            <View style={styles.detailSection}>
+              <Text style={styles.sectionHeading}>Payment Details</Text>
+              <View style={styles.billRow}>
+                <Text style={styles.billLabel}>Subtotal</Text>
+                <Text style={styles.billValue}>₹{subtotal}</Text>
+              </View>
+              <View style={styles.billRow}>
+                <Text style={styles.billLabel}>Delivery Fee</Text>
+                <Text style={styles.billValue}>₹{deliveryFee}</Text>
+              </View>
+              <View style={styles.totalDivider} />
+              <View style={styles.billRow}>
+                <Text style={styles.totalLabel}>Total Paid</Text>
+                <Text style={styles.totalValue}>₹{subtotal + deliveryFee}</Text>
+              </View>
+            </View>
 
+            <View style={styles.detailSection}>
+              <Text style={styles.sectionHeading}>Delivery Address</Text>
+              <Text style={styles.addressText}>Home • Nambol Naorem, Near Community Hall, Manipur</Text>
+            </View>
+          </ScrollView>
 
-// const styles = StyleSheet.create({
-//   container: {
-//     paddingTop: 50,
-//     paddingHorizontal: 35,
-//     flex: 1,
-//   },
-//   itemContent: {
-//     backgroundColor: COLORS.white,
-//     justifyContent: 'center',
-//     borderRadius: 20,
-//     position: 'relative',
-//     height: 150
-//   },
-//   itemContainer: {
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'space-between'
-//   },
-//   itemTop: {
-//     display: 'flex',
-//     flexDirection: 'row'
-//   },
-//   item: {
-//     height: 70,
-//     width: 70,
-//     marginHorizontal: 20
-//   },
-//   title: {
-//     fontSize: SIZES.small,
-//     fontWeight: 900
-//   },
-//   price: {
-//     fontSize: SIZES.xSmall,
-//     fontWeight: 900,
-//     color: COLORS.primary
-//   },
-//   quantity: {
-//     fontSize: SIZES.medium,
-//     fontWeight: 600,
-//     marginHorizontal: 20
-//   },
-//   itemBottom: {
-//     width: '50%',
-//     justifyContent: 'center',
-//     flexDirection: 'row',
-//     display: 'flex'
-//   },
-//   bottomButton: {
-//     backgroundColor: COLORS.red,
-//     borderRadius: 5,
-//     paddingVertical: 5,
-//     paddingHorizontal: 20
-//   },
-//   button: {
-    
-//   }
-// })
-
-
-import React from 'react'
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import TopHeader from '../components/TopHeader'
-import { COLORS, SIZES, image } from '../constants'
-
-// Sample data for orders
-const data = [
-  { id: 1, name: 'Vegetable Mix Omlete', price: 160, quantity: 4, image: image.item1 },
-  { id: 2, name: 'Sample Item', price: 120, quantity: 2, image: image.item1 }, // Add more items as needed
-]
-
-const OrderItem = ({ item }) => (
-  <View style={styles.itemContainer}>
-    <View style={styles.itemTop}>
-      <Image source={item.image} style={styles.itemImage} />
-      <View style={styles.itemDetails}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.price}>Rs {item.price}</Text>
+          <CustomButton 
+            title={isDelivered ? "Reorder All" : "Track Driver"} 
+            goto={() => alert("Tracking Driver...")} 
+            additionalStyle={{ flex: 0, marginTop: 15 }} 
+          />
+        </View>
       </View>
-      <Text style={styles.quantity}>X {item.quantity}</Text>
-    </View>
-    <View style={styles.itemBottom}>
-      <TouchableOpacity style={styles.bottomButton}>
-        <Text style={styles.buttonText}>Order Status</Text>
+    </Modal>
+  );
+};
+
+/**
+ * COMPONENT: Order Card
+ */
+const OrderItem = ({ item, onViewDetails }) => {
+  const isDelivered = item.status === 'delivered';
+  const itemCount = item.items.length;
+  const itemSummary = itemCount > 1 
+    ? `${item.items[0].name} + ${itemCount - 1} others`
+    : item.items[0].name;
+
+  return (
+    <TouchableOpacity 
+        style={[
+            styles.orderCard, 
+            isDelivered ? styles.pastCard : styles.activeCard,
+            isDelivered ? SHADOWS.small : SHADOWS.medium // Using your SHADOWS
+        ]} 
+        activeOpacity={0.9} 
+        onPress={() => onViewDetails(item)}
+    >
+      <View style={styles.cardHeader}>
+        <Image source={item.items[0].image} style={styles.productImg} />
+        <View style={styles.infoColumn}>
+          <Text style={styles.productName} numberOfLines={1}>{itemSummary}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.productPrice}>₹{item.totalPrice}</Text>
+            <View style={styles.itemCountBadge}>
+              <Text style={styles.itemCountText}>{itemCount} Item{itemCount > 1 ? 's' : ''}</Text>
+            </View>
+          </View>
+        </View>
+        
+        <View style={styles.statusBadge}>
+          <View style={[styles.dot, { backgroundColor: isDelivered ? '#4CAF50' : '#FF9500' }]} />
+          <Text style={[styles.statusText, { color: isDelivered ? '#4CAF50' : '#FF9500' }]}>{item.status}</Text>
+        </View>
+      </View>
+
+      <View style={styles.cardFooter}>
+        <Text style={styles.viewDetailsLink}>Details</Text>
+        <View style={styles.actionGroup}>
+          {isDelivered ? (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity style={styles.helpBtn}><Text style={styles.helpBtnTxt}>Help</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.rateBtn}><Text style={styles.rateBtnTxt}>Rate</Text></TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity style={styles.cancelBtn}><Text style={styles.cancelBtnText}>Cancel</Text></TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+
+const OrderFilter = ({ activeTab, setActiveTab }) => {
+  return (
+    <View style={styles.filterContainer}>
+      <TouchableOpacity 
+        style={[styles.filterBtn, activeTab === 'active' && styles.filterBtnActive]}
+        onPress={() => setActiveTab('active')}
+      >
+        <Text style={[styles.filterText, activeTab === 'active' && styles.filterTextActive]}>
+          Active
+        </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomButton}>
-        <Text style={styles.buttonText}>Cancel</Text>
+
+      <TouchableOpacity 
+        style={[styles.filterBtn, activeTab === 'past' && styles.filterBtnActive]}
+        onPress={() => setActiveTab('past')}
+      >
+        <Text style={[styles.filterText, activeTab === 'past' && styles.filterTextActive]}>
+          History
+        </Text>
       </TouchableOpacity>
     </View>
-  </View>
-)
+  );
+};
 
 export default function Orders({ navigation }) {
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('active');
+
+  const orderData = [
+    { 
+      id: 1, 
+      status: 'preparing',
+      totalPrice: 420,
+      items: [
+        { name: 'Vegetable Mix Omlete', price: 160, quantity: 2, image: image.item1 },
+        { name: 'Hot Coffee', price: 50, quantity: 2, image: image.item1 }
+      ]
+    },
+    { 
+      id: 2, 
+      status: 'delivered',
+      totalPrice: 450,
+      items: [{ name: 'Cheese Burst Pizza', price: 450, quantity: 1, image: image.item1 }]
+    }
+  ];
+
+  const filteredOrders = orderData.filter(o => 
+    activeTab === 'active' ? o.status !== 'delivered' : o.status === 'delivered'
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <TopHeader title="Orders" goto={() => navigation.goBack()} />
 
-      {/* Render list of order items */}
-      {data.map((item) => (
-        <OrderItem key={item.id} item={item} />
-      ))}
+      <OrderFilter activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* Uncomment if you want a checkout button */}
-      {/* <CustomButton title="Checkout" goto={() => navigation.navigate("Checkout")} /> */}
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollList}>
+        {filteredOrders.length > 0 ? (
+          filteredOrders.map(order => (
+            <OrderItem key={order.id} item={order} onViewDetails={(o) => { setSelectedOrder(o); setModalVisible(true); }} />
+          ))
+        ) : (
+          <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons name="clipboard-text-outline" size={80} color={COLORS.gray2} />
+            <Text style={styles.emptyText}>No {activeTab} orders found</Text>
+          </View>
+        )}
+      </ScrollView>
+
+      <OrderDetailsPopup visible={modalVisible} order={selectedOrder} onClose={() => setModalVisible(false)} />
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    paddingHorizontal: 20,
+  container: { 
+    flex: 1, 
+    paddingHorizontal: 35,
+    paddingTop: 50 
   },
-  itemContainer: {
-    backgroundColor: COLORS.white,
-    borderRadius: 20,
-    padding: 15,
-    marginVertical: 10,
-    elevation: 2, // Shadow for Android
-  },
-  itemTop: {
+  
+  // Filter Styles
+ filterContainer: {
     flexDirection: 'row',
+    marginHorizontal: 35,
+    marginTop: 20,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray2 + '30', // Faint line across the whole width
+  },
+  filterBtn: {
+    flex: 1,
+    paddingVertical: 12,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: 'transparent', 
   },
-  itemImage: {
-    height: 70,
-    width: 70,
-    borderRadius: 10,
+  filterBtnActive: {
+    borderBottomColor: COLORS.primary, // Show underline when active
   },
-  itemDetails: {
-    flex: 1,
-    marginLeft: 15,
+  filterText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: COLORS.gray,
   },
-  title: {
-    fontSize: SIZES.small,
-    fontWeight: '900',
-  },
-  price: {
-    fontSize: SIZES.xSmall,
-    fontWeight: '900',
+  filterTextActive: {
     color: COLORS.primary,
-    marginTop: 5,
+    fontWeight: '900', // Make text bolder when active
   },
-  quantity: {
-    fontSize: SIZES.medium,
-    fontWeight: '600',
+
+  // List & Empty State
+  scrollList: { 
+    paddingBottom: 40, 
+    paddingTop: 10 
   },
-  itemBottom: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 15,
+  emptyContainer: { 
+    alignItems: 'center', 
+    marginTop: 100 
   },
-  bottomButton: {
-    backgroundColor: COLORS.red,
-    borderRadius: 5,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
+  emptyText: { 
+    marginTop: 15, 
+    fontSize: SIZES.small, 
+    color: COLORS.gray2, 
+    fontWeight: '600' 
   },
-  buttonText: {
-    color: COLORS.white,
-    fontSize: SIZES.small,
-    fontWeight: '600',
+
+  // Card Styles
+  orderCard: { 
+    backgroundColor: COLORS.white, 
+    borderRadius: 22, 
+    padding: 16, 
+    marginBottom: 16 
   },
+  activeCard: { 
+    borderWidth: 1, 
+    borderColor: COLORS.primary + '15' 
+  },
+  pastCard: { 
+    opacity: 0.9 
+  },
+  cardHeader: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderBottomWidth: 1, 
+    borderBottomColor: COLORS.lightWhite, 
+    paddingBottom: 15 
+  },
+  productImg: { height: 60, width: 60, borderRadius: 12 },
+  infoColumn: { flex: 1, marginLeft: 15 },
+  productName: { fontSize: 14, fontWeight: '900', color: COLORS.black },
+  priceRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  productPrice: { fontSize: SIZES.small + 1, fontWeight: '900', color: COLORS.primary },
+  itemCountBadge: { marginLeft: 8, backgroundColor: COLORS.lightWhite, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 5 },
+  itemCountText: { fontSize: SIZES.xSmall - 1, fontWeight: '800', color: COLORS.gray },
+  statusBadge: { position: 'absolute', top: -2, right: 0, flexDirection: 'row', alignItems: 'center' },
+  dot: { width: 6, height: 6, borderRadius: 3, marginRight: 5 },
+  statusText: { fontSize: SIZES.xSmall - 1, fontWeight: '900', textTransform: 'uppercase' },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 },
+  viewDetailsLink: { fontSize: SIZES.small, fontWeight: '800', color: COLORS.primary, textDecorationLine: 'underline' },
+  actionGroup: { flexDirection: 'row' },
+  cancelBtn: { paddingHorizontal: 10 },
+  cancelBtnText: { color: COLORS.red, fontSize: SIZES.small, fontWeight: '800' },
+  rateBtn: { backgroundColor: COLORS.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, marginLeft: 8 },
+  rateBtnTxt: { color: COLORS.white, fontSize: SIZES.xSmall + 1, fontWeight: '800' },
+  helpBtn: { paddingHorizontal: 8 },
+  helpBtnTxt: { color: COLORS.gray, fontSize: SIZES.xSmall + 1, fontWeight: '700' },
+
+  // Modal Styles
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: COLORS.white, borderTopLeftRadius: 35, borderTopRightRadius: 35, padding: 25, maxHeight: '82%' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  modalTitle: { fontSize: SIZES.medium, fontWeight: '900' },
+  modalOrderId: { fontSize: SIZES.xSmall, color: COLORS.gray2 },
+  closeBtn: { backgroundColor: COLORS.lightWhite, padding: 6, borderRadius: 20 },
+  trackingSection: { backgroundColor: COLORS.primary + '10', padding: 12, borderRadius: 12, marginBottom: 20 },
+  trackingRow: { flexDirection: 'row', alignItems: 'center' },
+  trackingText: { marginLeft: 10, fontSize: SIZES.small, color: COLORS.primary, fontWeight: '700' },
+  detailSection: { marginBottom: 20 },
+  sectionHeading: { fontSize: SIZES.small, fontWeight: '800', color: COLORS.gray2, marginBottom: 12, textTransform: 'uppercase' },
+  detailItemRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
+  detailItemName: { fontSize: 14, fontWeight: '700', color: COLORS.black },
+  detailItemQty: { fontSize: SIZES.small, color: COLORS.gray, marginTop: 2 },
+  detailItemPrice: { fontSize: 14, fontWeight: '900' },
+  billRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 5 },
+  billLabel: { color: COLORS.gray, fontSize: SIZES.small },
+  billValue: { fontSize: SIZES.small, fontWeight: '700' },
+  totalDivider: { height: 1, backgroundColor: COLORS.lightWhite, marginVertical: 10 },
+  totalLabel: { fontSize: SIZES.medium, fontWeight: '900' },
+  totalValue: { fontSize: SIZES.medium, fontWeight: '900', color: COLORS.primary },
+  addressText: { fontSize: SIZES.small, color: COLORS.gray, lineHeight: 19 },
 });

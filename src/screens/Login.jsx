@@ -1,16 +1,16 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native'
 import { COLORS, SIZES, image } from '../constants'
-import { Card } from 'react-native-shadow-cards';
+// import { Card } from 'react-native-shadow-cards';
 import CustomButton from '../components/CustomButton';
 
 
 function TopSection() {
     return (
-        <Card style={styles.topContainer}>
+        <View style={styles.topContainer}>
             <Image style={styles.topLogo} source={image.logo} />
             <Text style={styles.topTitle}>Login/Register</Text>
-        </Card>
+        </View>
     )
 }
 
@@ -84,12 +84,25 @@ function Form() {
 }
 
 export default function Login({navigation}) {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+    // Set a timer for 1000ms (1 second)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 200);
+
+    // Cleanup the timer if the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
     return (
-        <View style={styles.container} >
+        !loading && <View style={styles.container} >
             <TopSection />
             <Form />
             <CustomButton  title={"Login"} goto={()=>navigation.navigate('Homepage')} />
         </View>
+        
     )
 }
 

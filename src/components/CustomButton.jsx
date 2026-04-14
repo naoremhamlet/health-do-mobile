@@ -2,10 +2,10 @@ import React from 'react'
 import { Pressable, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { COLORS, SIZES } from '../constants';
 
-export default function CustomButton({title, goto, additionalStyle}) {
+export default function CustomButton({title, goto, additionalStyle, buttonStyle}) {
   return (
-    <View style={{...styles.container, ...additionalStyle}}>
-      <TouchableOpacity style={styles.button} onPress={goto}>
+    <View style={[styles.container, additionalStyle]}>
+      <TouchableOpacity style={[styles.button, buttonStyle]} onPress={goto}>
           <Text style={styles.buttonTitle}>{title}</Text>
       </TouchableOpacity>
     </View>
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     marginBottom: 35,
     width: '100%',
     alignSelf:'center',
-    minHeight: 70,
+    minHeight: 70
   },
   button: {
     padding: 20,

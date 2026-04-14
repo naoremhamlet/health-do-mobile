@@ -1,16 +1,16 @@
 import React from 'react'
 import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native'
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
-import { SIZES } from '../constants'
+import { SIZES, COLORS, SHADOWS } from '../constants'
 
 
 export default function TopHeader({title, goto}) {
   return (
     <View style={styles.container}>
-        <TouchableOpacity style={styles.icon} onPress={goto}>
+        <TouchableOpacity style={[styles.icon, SHADOWS.small]} onPress={goto} activeOpacity={0.7}>
           <Octicons name='chevron-left' size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title} numberOfLines={1}>{title}</Text>
     </View>
   )
 }
@@ -22,7 +22,13 @@ const styles = StyleSheet.create({
     },
 
     icon: {
-      flex:1,
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: COLORS.white,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 5
     },
 
     title: {
@@ -35,4 +41,4 @@ const styles = StyleSheet.create({
         alignItems:'center',
         textAlign: 'center'
     }
-})
+});

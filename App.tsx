@@ -5,7 +5,7 @@ import Splash from './src/screens/Splash';
 import Login from './src/screens/Login';
 import Home from './src/screens/Home';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Cart from './src/screens/Cart';
 import Products from './src/screens/Products';
 import ProductDetail from './src/screens/ProductDetail';
@@ -15,8 +15,9 @@ import Orders from './src/screens/Orders';
 
 import store from './src/store/store';
 import { Provider } from 'react-redux';
+import Address from './src/screens/Address';
 
-const Stack = createStackNavigator()
+const Stack = createNativeStackNavigator()
 export default function App() {
   return (
     <Provider store={store}>
@@ -30,6 +31,7 @@ export default function App() {
           <Stack.Screen name="ProductDetail" component={ProductDetail} />
           <Stack.Screen name="Checkout" component={Checkout} />
           <Stack.Screen name="Orders" component={Orders} />
+          <Stack.Screen name="Address" component={Address} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

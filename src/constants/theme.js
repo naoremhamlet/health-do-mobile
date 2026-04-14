@@ -12,7 +12,9 @@ const COLORS = {
   lightWhite: "#F2F2F2",
   background: "#EDEDED",
 
-  wrapper: "#3a3737cc"
+  wrapper: "#3a3737cc",
+
+  placehoder: "rgba(0, 0, 0, 0.5)"
 };
 
 const FONT = {

@@ -8,7 +8,10 @@ const accountSlice = createSlice({
             name: "",
             phone: "",
             email: "",
-            address: ""
+            address: "",
+            profileImage: null,
+            age: null,
+            sex: null
         }
     },
     reducers: {
