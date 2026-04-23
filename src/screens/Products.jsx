@@ -2,10 +2,31 @@ import { Octicons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, Modal, Pressable, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { COLORS, SHADOWS } from '../constants'
+import { COLORS, PADDINGS, SHADOWS } from '../constants'
 import ProductSmall from '../components/ProductSmall'
 import { useRoute } from '@react-navigation/native'
 import TopHeader from '../components/TopHeader'
+
+
+const SearchInput = ({  searchPhrase, setSearchPhrase }) => {
+  return (
+    <View style={[styles.searchBar, SHADOWS.small]}>
+      <TextInput 
+          style={styles.input}
+          value={searchPhrase}
+          placeholder="Search healthy food..."
+          placeholderTextColor="#999"
+          autoFocus={true}
+          onChangeText={(text) => setSearchPhrase(text)} 
+      />
+      {searchPhrase.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchPhrase("")}>
+              <Ionicons name="close-circle" size={18} color={COLORS.gray} />
+          </TouchableOpacity>
+      )}
+  </View>
+  )
+}
 
 export default function Products({ navigation }) {
   const route = useRoute();
@@ -34,27 +55,10 @@ export default function Products({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 1. TOP SECTION (Header + Search) */}
-      <View style={styles.headerArea}>
-        <View style={styles.topNavRow}>
-            <TopHeader goto={() => navigation.goBack()} />
-            <View style={[styles.searchBar, SHADOWS.small]}>
-                <TextInput 
-                    style={styles.input}
-                    value={searchPhrase}
-                    placeholder="Search healthy food..."
-                    placeholderTextColor="#999"
-                    autoFocus={true}
-                    onChangeText={(text) => setSearchPhrase(text)} 
-                />
-                {searchPhrase.length > 0 && (
-                    <TouchableOpacity onPress={() => setSearchPhrase("")}>
-                        <Ionicons name="close-circle" size={18} color={COLORS.gray} />
-                    </TouchableOpacity>
-                )}
-            </View>
-        </View>
-      </View>
+      <TopHeader 
+            goto={() => navigation.goBack()} 
+            component={<SearchInput searchPhrase={searchPhrase} setSearchPhrase={setSearchPhrase} /> } 
+            showTitle={false} />
 
       {/* 2. MAIN CONTENT (Results & List) */}
       <View style={styles.bottomContainer}>
@@ -166,52 +170,56 @@ export default function Products({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
-  },
-  headerArea: {
-    paddingHorizontal: 25,
-    paddingTop: 10,
-    paddingBottom: 15,
-  },
-  topNavRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
   },
   searchBar: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.white,
-    borderRadius: 20,
+    borderRadius: 25,
     paddingHorizontal: 15,
-    height: 52,
+    marginLeft: 10,
+    height: 50,
     borderWidth: 1,
     borderColor: '#F0F0F0',
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.black,
     fontWeight: '600',
   },
   bottomContainer: {
     flex: 1,
-    backgroundColor: "#F9F9F9",
     borderTopLeftRadius: 45,
     borderTopRightRadius: 45,
+    marginTop: 10
   },
   utilityBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 35,
+    paddingHorizontal: PADDINGS.horizonatal + 20,
     paddingTop: 30,
     paddingBottom: 20,
   },
-  countContainer: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
-  resultCountText: { fontSize: 28, fontWeight: '900', color: COLORS.black },
-  resultLabel: { fontSize: 13, fontWeight: '700', color: COLORS.gray, textTransform: 'uppercase', letterSpacing: 0.5 },
+  countContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'baseline', 
+    gap: 6 
+  },
+  resultCountText: { 
+    fontSize: 17, 
+    fontWeight: '900', 
+    color: COLORS.black 
+  },
+  resultLabel: { 
+    fontSize: 13, 
+    fontWeight: '700', 
+    color: COLORS.gray, 
+    textTransform: 'uppercase', 
+    letterSpacing: 0.5 
+  },
   
   actionIcons: {
     flexDirection: 'row',
@@ -220,8 +228,17 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     ...SHADOWS.small,
   },
-  iconCircle: { width: 46, height: 46, justifyContent: 'center', alignItems: 'center' },
-  verticalDivider: { width: 1, height: 20, backgroundColor: '#EEE' },
+  iconCircle: { 
+    width: 42, 
+    height: 42, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  verticalDivider: { 
+    width: 1, 
+    height: 20, 
+    backgroundColor: '#EEE' 
+  },
 
   // --- Modal & Bottom Sheet Styles ---
   modalOverlay: {
@@ -264,88 +281,10 @@ const styles = StyleSheet.create({
   applyBtnText: { color: COLORS.white, fontWeight: '900', fontSize: 16 },
 
   // --- Grid Layout ---
-  listContent: { paddingHorizontal: 25, paddingBottom: 40 },
+  listContent: { 
+    paddingHorizontal: 25, 
+    paddingBottom: 40 
+  },
   columnWrapper: { justifyContent: 'space-between', marginBottom: 20 },
   cardWrapper: { width: '47%' }
 })
-// import { Octicons } from '@expo/vector-icons'
-// import React, { useState } from 'react'
-// import { StyleSheet, Text, Pressable, View, TextInput, FlatList, TouchableOpacity } from 'react-native'
-// import { SafeAreaView } from 'react-native-safe-area-context'
-// import { SIZES } from '../constants'
-// import ProductSmall from '../components/ProductSmall'
-// import { useRoute } from '@react-navigation/native'
-
-
-// const Top = ({navigation, searchPhrase, setSearchPhrase}) => {
-//   return (
-//     <View style={styles.topContainer}>
-//         <TouchableOpacity onPress={() => navigation.goBack()}>
-//           <Octicons name='chevron-left' size={24} color="black" />
-//         </TouchableOpacity>
-//         <TextInput 
-//           style={styles.input}
-//           value={searchPhrase}
-//           onChangeText={(e) => setSearchPhrase(e)} />
-//     </View>
-//   )
-// }
-
-// export default function Products({navigation}) {
-//   const route = useRoute()
-//   const [searchPhrase, setSearchPhrase] = useState("")
-//   return (
-//     <SafeAreaView style={styles.container}>
-//         <Top navigation={navigation}
-//           searchPhrase={searchPhrase}
-//           setSearchPhrase={setSearchPhrase} />
-//         <View style={styles.bottomContainer}>
-//           <Text style={styles.bottomText}>Found 6 results</Text>
-//           <FlatList 
-//             numColumns={2}
-//             // columnWrapperStyle="row"
-//             keyExtractor={item => item.id}
-//             data={[{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]}
-//             renderItem={(item) => (
-//               <ProductSmall 
-//                 item={item.item}
-//                 navigation={navigation} />
-//             )}
-//           />
-//         </View>
-//     </SafeAreaView>
-//   )
-// }
-
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     paddingTop: 20,
-//   },
-//   topContainer: {
-//     display: 'flex',
-//     flexDirection: 'row',
-//     alignItems:'center',
-//     paddingHorizontal: 35,
-//   },
-//   input: {
-//     width: '95%',
-//     fontSize: SIZES.medium,
-//     paddingHorizontal: 30,
-//     paddingVertical: 5
-//   },
-//   bottomContainer: {
-//     marginTop: 30,
-//     flex: 1,
-//     backgroundColor: "#F9F9F9",
-//     borderRadius: 30,
-//     display: 'flex',
-//     alignItems: 'center',
-//   },
-//   bottomText: {
-//     fontSize: SIZES.xLarge,
-//     fontWeight: 700,
-//     paddingVertical: 25
-//   }
-// })

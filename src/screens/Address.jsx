@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS, SHADOWS } from '../constants';
+import { COLORS, PADDINGS, SHADOWS } from '../constants';
 import TopHeader from '../components/TopHeader';
 import CustomButton from '../components/CustomButton';
 
@@ -51,7 +51,7 @@ const AddressCard = ({ item, onEdit }) => {
 };
 
 export default function Address({ navigation }) {
-  // --- STATE FOR POPUP ---
+
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
@@ -78,12 +78,6 @@ export default function Address({ navigation }) {
         )}
       />
 
-      {/* 2. THE EDIT ADDRESS POPUP
-      <AddressPopup
-        closePopup={() => navigation.goBack()} 
-        type={"Edit Address"}
-      /> */}
-
       { isPopupVisible && 
       <AddressPopup 
         closePopup={() => setIsPopupVisible(false)} 
@@ -93,7 +87,7 @@ export default function Address({ navigation }) {
 
       <View style={styles.footer}>
         <CustomButton 
-          title="Add New Address" 
+          title="New Address" 
           goto={() => {
             setSelectedAddress(null);
             setIsPopupVisible(true);
@@ -105,8 +99,14 @@ export default function Address({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9F9F9' },
-  listContent: { paddingHorizontal: 25, paddingTop: 20, paddingBottom: 120 },
+  container: { 
+    flex: 1,
+   },
+  listContent: { 
+    paddingHorizontal: PADDINGS.horizonatal, 
+    paddingTop: 20, 
+    paddingBottom: 120 
+  },
   card: {
     backgroundColor: COLORS.white,
     borderRadius: 24,

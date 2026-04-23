@@ -5,33 +5,27 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
-import { COLORS, SIZES, SHADOWS } from '../constants';
+import { COLORS, SIZES, SHADOWS, PADDINGS } from '../constants';
 
 import TopHeader from '../components/TopHeader';
 import { PaymentPopup } from '../components/Popup/PaymentPopup';
 import { DeliveryPopup } from '../components/Popup/DeliveryPopup';
 
-// Enable LayoutAnimation for Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 const DeliveryBody = ({ onEdit }) => (
     <View style={styles.bodySection}>
         <View style={styles.headerRow}>
             <Text style={styles.bodyTitle}>Delivery Address</Text>
             <TouchableOpacity onPress={onEdit} activeOpacity={0.7}>
-                <Text style={styles.editLink}>Edit</Text>
+                <Text style={styles.editLink}>Change</Text>
             </TouchableOpacity>
         </View>
         
         <View style={[styles.card, SHADOWS.small]}>
-            {/* Top Row with Icon and Refined Tag */}
             <View style={styles.cardTop}>
                 <View style={styles.iconCircle}>
                     <Ionicons name="location" size={18} color={COLORS.primary} />
                 </View>
-                {/* Modern Pill Tag */}
                 <View style={styles.modernTag}>
                     <Text style={styles.modernTagText}>HOME</Text>
                 </View>
@@ -241,19 +235,58 @@ export default function Checkout({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, paddingHorizontal: 35, paddingTop: 50, backgroundColor: '#FBFBFB' },
-    tabBar: { flexDirection: 'row', marginTop: 15, justifyContent: 'space-evenly' },
-    tab: { paddingBottom: 8, borderBottomWidth: 2, borderBottomColor: 'transparent', width: '50%', alignItems: 'center' },
-    activeTab: { borderBottomColor: COLORS.primary },
-    tabLabel: { fontSize: 16, fontWeight: '600', color: '#A0A0A0' },
-    activeLabel: { color: COLORS.black, fontWeight: '900' },
-    scrollInside: { paddingBottom: 160 },
+    container: { 
+        flex: 1, 
+    },
+    tabBar: { 
+        flexDirection: 'row', 
+        marginTop: 15, 
+        justifyContent: 'space-evenly',
+        paddingHorizontal: PADDINGS.horizonatal + 30,
+    },
+    tab: { 
+        paddingBottom: 8, 
+        borderBottomWidth: 1, 
+        borderBottomColor: 'transparent', 
+        width: '50%', 
+        alignItems: 'center' 
+    },
+    activeTab: { 
+        borderBottomColor: COLORS.primary 
+    },
+    tabLabel: { 
+        fontSize: 14,
+        fontWeight: '600', 
+        color: '#A0A0A0' 
+    },
+    activeLabel: { 
+        color: COLORS.black, 
+        fontWeight: '900' 
+    },
+    scrollInside: { 
+        paddingBottom: 160 
+    },
     
     // Body & Delivery Card
-    bodySection: { marginTop: 25 },
-    headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
-    bodyTitle: { fontSize: 18, fontWeight: '900', color: COLORS.black },
-    editLink: { color: COLORS.primary, fontWeight: '700' },
+    bodySection: { 
+        marginTop: 25,
+        paddingHorizontal: PADDINGS.horizonatal,
+    },
+    headerRow: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: 15 
+    },
+    bodyTitle: { 
+        fontSize: SIZES.medium, 
+        fontWeight: '900', 
+        color: COLORS.black 
+    },
+    editLink: { 
+        color: COLORS.primary, 
+        fontWeight: '700' 
+    },
 
     card: { 
         backgroundColor: COLORS.white, 
@@ -386,68 +419,3 @@ const styles = StyleSheet.create({
     confirmBtn: { backgroundColor: COLORS.primary, paddingHorizontal: 30, paddingVertical: 14, borderRadius: 16 },
     confirmBtnText: { color: COLORS.white, fontWeight: '900', fontSize: 15 }
 });
-
-// import React, { useState } from 'react'
-// import { StyleSheet, Text, View, Modal } from 'react-native'
-// import { SafeAreaView } from 'react-native-safe-area-context'
-// import TopHeader from '../components/TopHeader'
-// import CustomButton from '../components/CustomButton'
-// import { SIZES } from '../constants'
-// import { Delivery } from '../components/Delivery'
-// import { Payment } from '../components/Payment'
-// import { PaymentPopup } from '../components/Popup/PaymentPopup'
-// import { DeliveryPopup } from '../components/Popup/DeliveryPopup'
-
-
-
-// export default function Checkout({ navigation }) {
-//   const [active, setActive] = useState("Delivery")
-//   const [notifyPaymentPopup, setNotifyPaymentPopup] = useState(false)
-//   const [editAddressPopup, setEditAddressPopup] = useState(false)
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//         <TopHeader title="Checkout" 
-//           goto={() => {
-//             if(active === "Delivery")
-//               return navigation.goBack()
-//             else
-//               return setActive("Delivery")
-//           }} />
-
-//         {active ==="Delivery" && <Delivery editAddress={()=> setEditAddressPopup(true)} />}
-//         {active ==="Payment" && <Payment />}
-//         {notifyPaymentPopup && <PaymentPopup closePopup={() => setNotifyPaymentPopup(false)} />}
-//         {editAddressPopup && <DeliveryPopup closePopup={() => setEditAddressPopup(false)} />}
-        
-//         <View style={styles.total}>
-//             <Text style={{ fontSize: SIZES.medium, fontWeight: 400}}>Total</Text>
-//             <Text style={{ fontSize: SIZES.large, fontWeight: 900}}>Rs 1560</Text>
-//         </View>
-
-//         <CustomButton 
-//           title={active==="Delivery"? "Payment" : "Proceed to Payment"} 
-//           goto={() => {
-//             if(active === "Delivery")
-//               return setActive("Payment")
-//             else
-//               setNotifyPaymentPopup(true)
-//           }} />
-//     </SafeAreaView>
-//   )
-// }
-
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         paddingTop: 50,
-//         paddingHorizontal: 35,
-//     },
-//     total: {
-//       display: 'flex',
-//       flexDirection: 'row',
-//       justifyContent: 'space-between',
-//       alignItems:'center'
-//     }
-// })

@@ -7,16 +7,15 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import TopHeader from '../components/TopHeader';
 import CustomButton from '../components/CustomButton';
-import { COLORS, SIZES, SHADOWS, image } from '../constants'; // Using your constants
+import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants'; // Using your constants
 
-/**
- * COMPONENT: Order Details Modal
- */
+
 const OrderDetailsPopup = ({ visible, order, onClose }) => {
   if (!order) return null;
 
@@ -113,7 +112,6 @@ const OrderItem = ({ item, onViewDetails }) => {
             isDelivered ? SHADOWS.small : SHADOWS.medium // Using your SHADOWS
         ]} 
         activeOpacity={0.9} 
-        onPress={() => onViewDetails(item)}
     >
       <View style={styles.cardHeader}>
         <Image source={item.items[0].image} style={styles.productImg} />
@@ -134,7 +132,9 @@ const OrderItem = ({ item, onViewDetails }) => {
       </View>
 
       <View style={styles.cardFooter}>
-        <Text style={styles.viewDetailsLink}>Details</Text>
+        <Pressable onPress={() => onViewDetails(item)}>
+          <Text style={styles.viewDetailsLink}>Details</Text>
+        </Pressable>
         <View style={styles.actionGroup}>
           {isDelivered ? (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -229,43 +229,40 @@ export default function Orders({ navigation }) {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    paddingHorizontal: 35,
-    paddingTop: 50 
   },
   
   // Filter Styles
  filterContainer: {
-    flexDirection: 'row',
-    marginHorizontal: 35,
-    marginTop: 20,
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.gray2 + '30', // Faint line across the whole width
+    flexDirection: 'row', 
+    marginTop: 15, 
+    justifyContent: 'space-evenly',
+    paddingHorizontal: PADDINGS.horizonatal + 30,
+    marginBottom: 20,
   },
   filterBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderBottomWidth: 1,
+    paddingBottom: 8, 
+    borderBottomWidth: 1, 
     borderBottomColor: 'transparent', 
+    width: '50%', 
+    alignItems: 'center' 
   },
   filterBtnActive: {
-    borderBottomColor: COLORS.primary, // Show underline when active
+    borderBottomColor: COLORS.primary,
   },
   filterText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: COLORS.gray,
+    fontSize: 14,
+    fontWeight: '600', 
+    color: '#A0A0A0' 
   },
   filterTextActive: {
     color: COLORS.primary,
-    fontWeight: '900', // Make text bolder when active
+    fontWeight: '900',
   },
 
   // List & Empty State
-  scrollList: { 
-    paddingBottom: 40, 
-    paddingTop: 10 
+  scrollList: {
+    paddingHorizontal: PADDINGS.horizonatal,
+    paddingTop: 10, 
   },
   emptyContainer: { 
     alignItems: 'center', 
@@ -320,8 +317,19 @@ const styles = StyleSheet.create({
   helpBtnTxt: { color: COLORS.gray, fontSize: SIZES.xSmall + 1, fontWeight: '700' },
 
   // Modal Styles
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: COLORS.white, borderTopLeftRadius: 35, borderTopRightRadius: 35, padding: 25, maxHeight: '82%' },
+  modalOverlay: { 
+    flex: 1, 
+    backgroundColor: 'rgba(0,0,0,0.6)', 
+    justifyContent: 'flex-end' 
+  },
+  modalContent: { 
+    backgroundColor: COLORS.white, 
+    borderTopLeftRadius: 35, 
+    borderTopRightRadius: 35, 
+    padding: 25, 
+    paddingBottom: 100,
+    maxHeight: '80%' 
+  },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   modalTitle: { fontSize: SIZES.medium, fontWeight: '900' },
   modalOrderId: { fontSize: SIZES.xSmall, color: COLORS.gray2 },

@@ -16,13 +16,17 @@ import Orders from './src/screens/Orders';
 import store from './src/store/store';
 import { Provider } from 'react-redux';
 import Address from './src/screens/Address';
+import Faq from './src/screens/Faq';
+import Support from './src/screens/Support';
+import PrivacyPolicy from './src/screens/Privacy';
+import Settings from './src/screens/Setting';
 
 const Stack = createNativeStackNavigator()
 export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Splash" screenOptions={{headerShown: false}}>
+        <Stack.Navigator initialRouteName="Homepage" screenOptions={{headerShown: false}}>
           <Stack.Screen name="Splash" component={Splash} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Homepage" component={Home} />
@@ -32,6 +36,10 @@ export default function App() {
           <Stack.Screen name="Checkout" component={Checkout} />
           <Stack.Screen name="Orders" component={Orders} />
           <Stack.Screen name="Address" component={Address} />
+          <Stack.Screen name="Faq" component={Faq} />
+          <Stack.Screen name="Support" component={Support} />
+          <Stack.Screen name="Privacy" component={PrivacyPolicy} />
+          <Stack.Screen name="Setting" component={Settings} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

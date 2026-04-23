@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     Text, View, StyleSheet, Image, ScrollView, 
     TouchableOpacity, Dimensions, Animated 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons, Octicons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { COLORS, SIZES, SHADOWS, image } from '../constants';
+import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants';
 import CustomButton from '../components/CustomButton';
 import { CustomCheckbox } from '../components/CustomCheckbox';
 import { updateFavourites } from '../store/reducer/favourites';
@@ -18,6 +18,7 @@ import TopHeader from '../components/TopHeader';
 
 const { width } = Dimensions.get('window');
 
+/** 1. TOP SECTION COMPONENT **/
 const TopSection = ({isFav, toggleFavourite}) => {
     return (
         <TouchableOpacity 
@@ -33,23 +34,17 @@ const TopSection = ({isFav, toggleFavourite}) => {
     )
 }
 
-const renderPagination = (index, total) => {
-    console.log(index, total);
+/** 2. FRESHNESS INDICATOR (Elite Pulse) **/
+const FreshnessIndicator = () => {
     return (
-        <View style={styles.paginationWrapper}>
-            {[...Array(total)].map((_, i) => (
-                <View 
-                    key={i} 
-                    style={[
-                        styles.dotBase, 
-                        index === i ? styles.dotActive : styles.dotInactive
-                    ]} 
-                />
-            ))}
+        <View style={styles.freshContainer}>
+            <View style={styles.pulseDot} />
+            <Text style={styles.freshText}>FRESHLY PREPARED</Text>
         </View>
-    );
-};
+    )
+}
 
+/** 3. PRODUCT IMAGES COMPONENT **/
 const ProductImages = () => {
     return (
         <View style={styles.imageBox}>
@@ -60,9 +55,7 @@ const ProductImages = () => {
                 activeDotColor={COLORS.primary}
                 dotStyle={styles.dot}
                 activeDotStyle={styles.activeDot}
-                style={styles.wrapper}
-                paginationStyle={renderPagination}
-                removeClippedSubviews={false} // Crucial for Android dot updates
+                removeClippedSubviews={false}
             >
                 {[1, 2, 3].map((_, i) => (
                     <View key={i} style={styles.slide}>
@@ -78,15 +71,43 @@ const ProductImages = () => {
     );
 };
 
-const ProductInfo = () => {
+const RatingInfo = ({ rating, reviews }) => {
     return (
-        <View style={styles.titleRow}>
-            <Text style={styles.mainTitle}>Avocado Mix Green</Text>
-            <Text style={styles.mainPrice}>₹160</Text>
+        <View style={styles.ratingContainer}>
+            <MaterialIcons name="star" size={18} color="#FFB800" />
+            <Text style={styles.ratingText}>{rating}</Text>
+            <Text style={styles.reviewText}>({reviews} reviews)</Text>
         </View>
     )
 }
 
+/** 4. PRODUCT INFO WITH OFFER PRICING **/
+const ProductInfo = ({ title, price, offerPrice, rating, reviews }) => {
+    const discount = Math.round(((price - offerPrice) / price) * 100);
+    
+    return (
+        <View style={styles.infoWrapper}>
+            <View style={styles.topRow}>
+                <FreshnessIndicator />
+                <RatingInfo rating={rating} reviews={reviews} />
+            </View>
+            <View style={styles.titleRow}>
+                <Text style={styles.mainTitle}>{title}</Text>
+            </View>
+            <View style={styles.priceContainer}>
+                <View style={styles.priceRow}>
+                    <Text style={styles.mainPrice}>₹{offerPrice}</Text>
+                    <Text style={styles.originalPrice}>₹{price}</Text>
+                </View>
+                <View style={styles.discountBadge}>
+                    <Text style={styles.discountText}>{discount}% OFF</Text>
+                </View>
+            </View>
+        </View>
+    )
+}
+
+/** 5. SERVICE INFO COMPONENT **/
 const ServiceInfo = () => {
     return (
         <View style={styles.section}>
@@ -101,6 +122,7 @@ const ServiceInfo = () => {
     )
 }
 
+/** 6. CUSTOMIZATION COMPONENT **/
 const Customization = ({customIn, setCustomIn, ingredientsList}) => {
     return (
         <View style={styles.section}>
@@ -128,6 +150,7 @@ const Customization = ({customIn, setCustomIn, ingredientsList}) => {
     )
 }
 
+/** 7. AFTER SERVICE INFO COMPONENT **/
 const AfterServiceInfo = () => {
     return (
         <View style={styles.section}>
@@ -142,6 +165,27 @@ const AfterServiceInfo = () => {
     )
 }
 
+const DeliverySelection = ({ address, onEdit }) => {
+    return (
+        <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+                <MaterialIcons name="location-on" size={20} color={COLORS.primary} />
+                <Text style={styles.sectionTitle}>Delivery Address</Text>
+                <TouchableOpacity onPress={onEdit} style={styles.editLink}>
+                    <Text style={styles.editText}>Change</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.addressCard}>
+                <Text style={styles.addressName}>Home</Text>
+                <Text style={styles.addressDetail} numberOfLines={1}>
+                    {address || "Set your delivery location..."}
+                </Text>
+            </View>
+        </View>
+    )
+}
+
+/** MAIN COMPONENT **/
 export default function ProductDetail({ navigation }) {
     const route = useRoute();
     const dispatch = useDispatch();
@@ -151,9 +195,14 @@ export default function ProductDetail({ navigation }) {
     const ingredientsList = ["Avocado", "Tortilla Chips", "Blackened Chicken", "Tomato", "Raw Carrot", "Hot Sauce", "Baby Spinach"];
     const [customIn, setCustomIn] = useState(ingredientsList);
 
-    const productId = route.params.id;
+    const productId = route.params?.id || 1;
     const isFav = favourites.some(el => el.id === productId);
     const isAlreadyInCart = cart.some(el => el.id === productId);
+
+    // Dynamic Data for the "Elite" Update
+    const originalPrice = 200;
+    const currentOfferPrice = 160;
+    const productTitle = "Avocado Mix Green";
 
     const toggleFavourite = () => {
         if (isFav) {
@@ -169,8 +218,8 @@ export default function ProductDetail({ navigation }) {
         } else {
             const newItem = {
                 id: productId,
-                name: "Avocado Mix Green",
-                price: 160,
+                name: productTitle,
+                price: currentOfferPrice,
                 quantity: 1,
                 ingredients: customIn,
                 image: image.item1
@@ -180,16 +229,33 @@ export default function ProductDetail({ navigation }) {
         }
     };
 
+    const [selectedAddress, setSelectedAddress] = useState("Naorem Hemlet, Nambol Naorem, 795134");
+
     return (
         <SafeAreaView style={styles.container}>
-            <TopHeader title="" goto={() => navigation.goBack()} />
-            <TopSection isFav={isFav}  toggleFavourite={toggleFavourite} />
-
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+            <TopHeader 
+                title="" 
+                goto={() => navigation.goBack()}
+                component={<TopSection isFav={isFav} toggleFavourite={toggleFavourite} />} />
+            
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <ProductImages />
                 <View style={styles.contentBody}>
-                    <ProductInfo />
+                    <ProductInfo 
+                        title={productTitle} 
+                        price={originalPrice} 
+                        offerPrice={currentOfferPrice}
+                        rating={4.8}
+                        reviews={124}
+                    />
+                    
                     <View style={styles.divider} />
+
+                    <DeliverySelection 
+                        address={selectedAddress} 
+                        onEdit={() => navigation.navigate('Address')} 
+                    />
+                    
                     <ServiceInfo />
                     <Customization 
                         customIn={customIn}
@@ -198,10 +264,12 @@ export default function ProductDetail({ navigation }) {
                     <AfterServiceInfo />
                 </View>
             </ScrollView>
+
             <CustomButton 
-                title={isAlreadyInCart ? "Cart" : "Add to Cart"} 
+                title={isAlreadyInCart ? "Go to Cart" : "Add to Cart"} 
                 goto={handleAddToCart}
-                buttonStyle={isAlreadyInCart && { backgroundColor: COLORS.secondary }}
+                additionalStyle={{ backgroundColor: COLORS.white }}
+                buttonStyle={isAlreadyInCart ? { backgroundColor: COLORS.secondary } : { backgroundColor: COLORS.primary }}
             />
         </SafeAreaView>
     );
@@ -210,31 +278,18 @@ export default function ProductDetail({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 50,
-        paddingHorizontal: 35,
-        backgroundColor: COLORS.white
-
     },
     iconCircle: {
-        width: 45,
-        height: 45,
-        borderRadius: 22.5,
+        width: 42,
+        height: 42,
+        borderRadius: 21,
         backgroundColor: COLORS.white,
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute',
-        right: 35
-    },
-    scrollContent: {
-        paddingBottom: 50,
     },
     imageBox: {
         overflow: 'hidden',
-        paddingTop: 60,
-        paddingBottom: 20,
-    },
-    wrapper: {
-        // Necessary for Swiper to track swipes
+        paddingVertical: 10,
     },
     slide: {
         justifyContent: 'center',
@@ -243,15 +298,6 @@ const styles = StyleSheet.create({
     heroImage: {
         width: width * 0.7,
         height: width * 0.7,
-    },
-    paginationWrapper: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     dot: {
         backgroundColor: 'rgba(0,0,0,.1)',
@@ -268,37 +314,139 @@ const styles = StyleSheet.create({
         margin: 3,
     },
     contentBody: {
-        marginTop: 25,
+        paddingHorizontal: PADDINGS.horizonatal,
+        backgroundColor: COLORS.white,
+        paddingBottom: 100,
+    },
+    infoWrapper: {
+        marginTop: 10,
+    },
+    freshContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.primary + '15',
+        alignSelf: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 20,
+        marginBottom: 12,
+    },
+    pulseDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: '#4ADE80',
+        marginRight: 6,
+    },
+    freshText: {
+        fontSize: 10,
+        fontWeight: '900',
+        color: COLORS.primary,
+        letterSpacing: 1,
     },
     titleRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        marginBottom: 15,
+        marginBottom: 8,
     },
     mainTitle: {
-        fontSize: 26,
+        fontSize: 28,
         fontWeight: '900',
         color: COLORS.black,
-        flex: 1,
+    },
+    priceContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 5,
+    },
+    priceRow: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
     },
     mainPrice: {
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: '900',
         color: COLORS.primary,
     },
+    originalPrice: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: COLORS.gray,
+        textDecorationLine: 'line-through',
+        marginLeft: 10,
+    },
+    discountBadge: {
+        backgroundColor: COLORS.red + '10',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 6,
+    },
+    discountText: {
+        color: COLORS.red,
+        fontWeight: '900',
+        fontSize: 12,
+    },
+    topRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFF9E5',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    ratingText: {
+        fontSize: 14,
+        fontWeight: '900',
+        color: '#FFB800',
+        marginLeft: 4,
+    },
+    reviewText: {
+        fontSize: 12,
+        color: COLORS.gray,
+        marginLeft: 4,
+    },
+    editLink: {
+        marginLeft: 'auto',
+    },
+    editText: {
+        color: COLORS.primary,
+        fontWeight: '900',
+        fontSize: 14,
+    },
+    addressCard: {
+        marginTop: 10,
+        padding: 15,
+        backgroundColor: '#F9F9F9',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#EEE',
+    },
+    addressName: {
+        fontSize: 14,
+        fontWeight: '900',
+        color: COLORS.black,
+        marginBottom: 4,
+    },
+    addressDetail: {
+        fontSize: 13,
+        color: COLORS.gray,
+    },
     divider: {
         height: 1,
-        backgroundColor: COLORS.lightWhite,
-        marginVertical: 10,
+        backgroundColor: '#F0F0F0',
+        marginVertical: 25,
     },
     section: {
-        marginTop: 25,
+        marginBottom: 30,
     },
     sectionHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 10,
     },
     sectionTitle: {
         fontSize: 16,
@@ -317,207 +465,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
     },
     gridItem: {
-        width: '50%', // Perfect two-column grid
+        width: '50%',
+        marginBottom: 10,
     }
 });
-
-
-// import { MaterialIcons, Octicons } from '@expo/vector-icons'
-// import { useRoute } from '@react-navigation/native'
-// import React, { useState } from 'react'
-// import { Text, View, Pressable, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
-// import { SafeAreaView } from 'react-native-safe-area-context'
-// import { COLORS, SIZES, image } from '../constants'
-// import Swiper from 'react-native-swiper/src'
-// import CustomButton from '../components/CustomButton'
-// import Checkbox from 'expo-checkbox';
-// import { useDispatch, useSelector } from 'react-redux'
-// import { updateFavourites } from '../store/reducer/favourites'
-// import { updateCart } from '../store/reducer/cart'
-// import { CustomCheckbox } from '../components/CustomCheckbox'
-
-
-// const images = [{id:1}, {id: 2}, {id: 3}]
-
-// const Top = ({navigation, id}) => {
-//     const favourites = useSelector(state => state.favourites.favourites)
-//     const dispatch = useDispatch()
-
-//     const toggleFavourite = () => {
-//         if(favourites.filter(el => el.id==id).length) {
-//             const newFavs = favourites.filter(el => el.id != id)
-//             dispatch(updateFavourites(newFavs))
-//         } else {
-//             const newFavs = [...favourites, {id:id}]
-//             dispatch(updateFavourites(newFavs))
-//         }
-//     }
-    
-//     const containInFav = favourites.filter(el => el.id==id).length
-
-//     return (
-//         <View style={styles.topContainer}>
-//             <TouchableOpacity onPress={() => navigation.goBack()}>
-//                 <Octicons name='chevron-left' size={24} color="black" />
-//             </TouchableOpacity>
-//             <TouchableOpacity onPress={toggleFavourite}>
-//                 <MaterialIcons name={containInFav? 'favorite' : 'favorite-outline'} size={24} color={COLORS.primary} />
-//             </TouchableOpacity>
-//         </View>
-//     )
-// }
-
-// const Images = () => {
-//     return (
-//         <View style={{ height: 300}}>
-//             <Swiper>
-//                 <View style={styles.imageContainer}>
-//                     <Image source={image.item1} style={styles.image} />
-//                 </View>
-//                 <View style={styles.imageContainer}>
-//                     <Image source={image.item1} style={styles.image} />
-//                 </View>
-//                 <View style={styles.imageContainer}>
-//                     <Image source={image.item1} style={styles.image} />
-//                 </View>
-//             </Swiper>
-//         </View>
-//     )
-// }
-
-// const Info = ({title, desc}) => {
-//     return (
-//         <View style={styles.infoContainer}>
-//             <Text style={styles.infoTitle}>{title}</Text>
-//             <Text style={styles.infoDesc}>{desc}</Text>
-//         </View>
-//     )
-// }
-
-// const Customization = ({customIn, setCustomIn, ingredients}) => {
-
-//     return (
-//         <View style={{ marginVertical: 35 }}>
-//            <Text style={styles.infoTitle}>Ingredients</Text>
-//             <View style={{alignItems:'center', display:'flex', flexDirection:'row', flexWrap:"wrap"}}>
-//                 {ingredients.map((item, id) => (
-//                     <CustomCheckbox
-//                         key={id}
-//                         label={item}
-//                         status={customIn.includes(item)}
-//                         onPress={() => {
-//                             if(customIn.includes(item)) {
-//                                 setCustomIn(customIn.filter(d => d != item))
-//                             } else {
-//                                 setCustomIn([...customIn, item])
-//                             }
-//                         }}
-//                         />
-//                 ))}
-//             </View>
-
-//         </View>
-//     )
-// }
-
-
-// export default function ProductDetail({navigation}) {
-//     const route = useRoute()
-//     const ingredients = ["Avocado", "Tortilla Chips", "Blackened Chicken", "Tomato", "Raw Carrot", "Hot Sauce", "Baby Spinach"]
-//     const cart = useSelector(state => state.cart.cart)
-//     const dispatch = useDispatch()
-
-//     const containInCart = cart.filter(el => el.id == route.params.id).length
-
-//     const [customIn, setCustomIn] = useState(ingredients)
-    
-//     return (
-//         <SafeAreaView style={styles.container}>
-//             <Top navigation={navigation} id={route.params.id} />
-//             <ScrollView showsVerticalScrollIndicator={false}>
-
-//                 <Images />
-//                 <View style={styles.titleContainer}>
-//                     <Text style={styles.title}>Avocado Mix Green</Text>
-//                     <Text style={styles.price}>Rs 160</Text>
-//                 </View>
-
-//                 <Info 
-//                     title="Delivery info"
-//                     desc="Delivered between Monday to Thursday from 10am to 5pm"
-//                 />
-//                 <Info
-//                     title="Return policy"
-//                     desc="All our foods are double checked before leaving our stores so by any case you found a broken food please contact our hotline immediately."
-//                 />
-//                 <Customization
-//                     customIn={customIn}
-//                     setCustomIn={setCustomIn}
-//                     ingredients={ingredients}
-//                  />
-//             </ScrollView>
-//             <CustomButton 
-//                 additionalStyle={{ opacity: containInCart? 0.5 : 1}}
-//                 title="Add to Cart" 
-//                 goto={() => { 
-//                     if(!containInCart) {
-//                         const newCart = [...cart, { id: route.params.id, quantity: 1}]
-//                         dispatch(updateCart(newCart))
-//                     } 
-//                 }}
-//             />
-//         </SafeAreaView>
-//     )
-// }
-
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         paddingTop: 50,
-//         paddingHorizontal: 35
-//     },
-//     topContainer: {
-//         display: 'flex',
-//         flexDirection: 'row',
-//         justifyContent: 'space-between'
-//     },
-//     imageContainer: {
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'center'
-//     },
-//     image: {
-//         height: 240,
-//         width: 240,
-//     },
-//     titleContainer: {
-//         display: 'flex',
-//         justifyContent:'center',
-//         alignItems:'center'
-//     },
-//     title: {
-//         fontSize: SIZES.xLarge,
-//         fontWeight: 900
-//     },
-//     price: {
-//         fontSize: SIZES.large,
-//         fontWeight: 700,
-//         color: COLORS.primary
-//     },
-//     infoContainer: {
-//         marginTop: 40
-//     },
-//     infoTitle: {
-//         fontSize: SIZES.medium,
-//         fontWeight: 900,
-//         lineHeight: 25,
-//         paddingBottom: 2
-//     },
-//     infoDesc: {
-//         fontSize: 15,
-//         fontWeight: 400,
-//         opacity: 0.6,
-//         lineHeight: 20,
-//     }
-// })

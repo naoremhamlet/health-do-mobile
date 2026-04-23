@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Modal, Pressable, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Modal, ScrollView, TouchableOpacity } from 'react-native'
 import { COLORS, SIZES } from '../../constants'
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
 import { AddressPopup } from './AddressPopup';
 
 

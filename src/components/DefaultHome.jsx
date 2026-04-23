@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'; 
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, SIZES, SHADOWS, FONT } from '../constants';
+import { COLORS, SIZES, SHADOWS, FONT, PADDINGS } from '../constants';
 
 // Components
 import SearchBar from './SearchBar';
@@ -29,7 +29,7 @@ const Products = ({ navigation }) => {
           return (
             <TouchableOpacity 
               style={styles.seeMoreCard}
-              onPress={() => navigation.navigate("Orders")} // Or your full list route
+              onPress={() => navigation.navigate("Products")} // Or your full list route
               activeOpacity={0.7}
             >
               <View style={styles.chevronCircle}>
@@ -46,7 +46,6 @@ const Products = ({ navigation }) => {
   )
 }
 
-/** 2. CATEGORY SECTION **/
 const ProductSection = ({ active, setActive, navigation }) => {
   const categories = ["Salads", "Drinks", "Fruits", "Snacks"];
   
@@ -57,7 +56,6 @@ const ProductSection = ({ active, setActive, navigation }) => {
           style={{ marginLeft: 25, alignSelf: 'flex-end' }}
           horizontal
           showsHorizontalScrollIndicator={false}
-          // contentContainerStyle={{ paddingLeft: 35 }}
           data={categories}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => setActive(item)} style={[styles.categoryTab, active === item && styles.activeCategoryTab]}>
@@ -71,7 +69,7 @@ const ProductSection = ({ active, setActive, navigation }) => {
       
       <View style={styles.sectionHeaderRow}>
         <Text style={styles.sectionTitle}>Popular Near You</Text>
-        <TouchableOpacity activeOpacity={0.6}>
+        <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate("Products")}>
           <Text style={styles.seeAllText}>See all</Text>
         </TouchableOpacity>
     </View>
@@ -138,13 +136,17 @@ export default function DefaultHome({ navigation }) {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    paddingHorizontal: 35,
-    paddingTop: 50
   },
   headerContainer: {  
-    paddingBottom: 20 
+    paddingHorizontal: PADDINGS.horizonatal,
+    paddingTop: PADDINGS.top,
+    paddingBottom: 20,
   },
-  headerIconRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  headerIconRow: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  },
   headerIconCircle: {
     width: 42,
     height: 42,
@@ -165,19 +167,20 @@ const styles = StyleSheet.create({
   // Category Styles
   productSectionContainer: { 
     flex: 1, 
-    marginTop: 10 
+    marginTop: 10,
   },
   categoryContainer: { 
     marginBottom: 5,
+    paddingHorizontal: PADDINGS.horizonatal
   },
   categoryTab: { 
-    marginRight: 30, 
+    marginHorizontal: 2,
+    width: 70, 
     alignItems: 'center',
-    width: '90%',
-    borderBottomWidth: 2,
-    fontWeight: '500', 
+    borderBottomWidth: 1,
+    fontWeight: '500',
     opacity: 0.7, 
-    borderBottomColor: COLORS.background
+    borderBottomColor: COLORS.background,
   },
   activeCategoryTab: {
     borderBottomColor: COLORS.primary,
@@ -185,19 +188,27 @@ const styles = StyleSheet.create({
   },
   categoryText: { 
     fontSize: 14, 
-    paddingVertical: 5 
+    paddingVertical: 5,
+    fontWeight: '600',
   },
   activeCategoryText: { 
     fontWeight: '900',
+    color: COLORS.primary,
   },
-  activeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.primary, marginTop: 2 },
+  activeDot: { 
+    width: 6, 
+    height: 6, 
+    borderRadius: 3, 
+    backgroundColor: COLORS.primary, 
+    marginTop: 2 
+  },
 
   // Section Header
   sectionHeaderRow: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center', // Changed from flex-end for better alignment
-    paddingHorizontal: 35, 
+    paddingHorizontal: PADDINGS.horizonatal + 10, 
     marginTop: 40, // More space above the section
     marginBottom: 5 // Space before the cards start
   },
@@ -218,7 +229,7 @@ const styles = StyleSheet.create({
 
   // Product List & See More Card
   productListContent: { 
-    flex: 1, marginTop: 10
+    marginTop: 10
   },
   seeMoreCard: {
     width: 140,
@@ -229,6 +240,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 20,
+    marginRight: 20,
     borderWidth: 1,
     borderColor: '#F0F0F0',
     ...SHADOWS.small,
@@ -250,144 +262,3 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   }
 });
-
-// import React, { useState } from 'react'
-// import { View, Pressable, Text, TextInput, StyleSheet, FlatList, ScrollView, TouchableOpacity } from 'react-native'
-// import { MaterialIcons, Ionicons } from '@expo/vector-icons'; 
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import { COLORS, FONT, SIZES } from '../constants';
-// import SearchBar from './SearchBar';
-// import Product from './Product';
-
-// const data = [ {id: 1}, {id: 2}, {id: 3}]
-
-
-// const Products = ({ navigation }) => {
-//   return (
-//     <FlatList
-//       horizontal={true}
-//       data={data}
-//       showsHorizontalScrollIndicator={false}
-//       renderItem={(item) => <Product item={item.item} navigation={navigation} />}
-//       keyExtractor={item => item.id}
-//      />
-//   )
-// }
-
-
-// const ProductSection = ({ active="Salads", setActive, navigation }) => {
-//   return (
-//     <View>
-//       <View style={styles.itemContainer}>
-//         <FlatList
-//           style={{ marginLeft: 25, alignSelf: 'flex-end' }}
-//           horizontal={true}
-//           showsHorizontalScrollIndicator={false}
-//           data={["Salads", "Drinks", "Fruits"]}
-//           renderItem={(item) => 
-//             <TouchableOpacity onPress={() => setActive(item.item)}>
-//               <Text 
-//                 style={{...styles.itemList, 
-//                 borderBottomWidth: active===item.item? 2:0,
-//                 borderColor: COLORS.primary,
-                
-//               }} >
-//                   {item.item}
-//               </Text>
-//             </TouchableOpacity>}
-//         />
-//       </View>
-//       <View style={{ marginTop: 50}}>
-//         <Products navigation={navigation} />
-//       </View>
-//     </View>
-//   )
-// }
-
-// const HeaderIcon = ({navigation}) => {
-//   return (
-//     <View style={styles.headerIconContainer}>
-//       <TouchableOpacity onPress={() => navigation.openDrawer()}>
-//         <MaterialIcons name="menu" size={24} color="black" />
-//       </TouchableOpacity>
-//       <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
-//         <Ionicons name="cart-outline" size={24} color="black" />
-//       </TouchableOpacity>
-//     </View>
-//   )
-// }
-
-// const Heading = () => {
-//   return (
-//     <View style={styles.headerHeadingContainer}>
-//       <Text style={styles.headerHeading}>{"Healthy"}</Text>
-//       <Text style={styles.headerHeading}>{"Food for you"}</Text>
-//     </View>
-//   )
-// }
-
-// export default function DefaultHome({ navigation }) {
-//   const [active, setActive] = useState();
-//   const [searchPhrase, setSearchPhrase] = useState("");
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <View style={styles.headerContainer}>
-//         <HeaderIcon navigation={navigation} />
-//         <Heading />
-//         <SearchBar
-//           navigation={navigation}
-//           searchPhrase={searchPhrase}
-//           setSearchPhrase={setSearchPhrase}
-//            />
-//       </View>
-//       <ProductSection 
-//         setActive={setActive} 
-//         active={active} 
-//         navigation={navigation} />
-//     </SafeAreaView>
-//   )
-// }
-
-
-// const styles = StyleSheet.create({
-//   container: {
-
-//   },
-//   headerContainer: {
-//     display: 'flex',
-//     paddingVertical: 50,
-//     paddingHorizontal: 50
-//   },
-//   headerIconContainer: {
-//     display: 'flex',
-//     flexDirection:'row',
-//     justifyContent: 'space-between'
-//   },
-//   headerHeadingContainer: {
-//     marginTop:40
-//   },
-//   headerHeading: {
-//     fontSize: SIZES.xxxLarge,
-//     fontWeight: 700
-//   },
-//   products: {
-//     height: 250,
-//     display: 'flex',
-//     width: '100%',
-//     flexDirection: 'row'
-//   },
-//   productSectionContainer: {
-
-//   },
-//   itemContainer: {
-//     paddingHorizontal: 20,
-//   },
-//   itemList: {
-//     fontSize: SIZES.medium,
-//     fontWeight: 400,
-//     marginHorizontal: 15,
-//     paddingHorizontal: 10,
-//     paddingVertical: 5,
-//   }
-// })

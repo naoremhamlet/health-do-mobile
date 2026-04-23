@@ -21,17 +21,9 @@ import Error from '../components/Error';
 
 import { updateCart } from '../store/reducer/cart';
 import { updateFavourites } from '../store/reducer/favourites';
-import { COLORS, SIZES, SHADOWS, image } from '../constants';
+import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants';
 
-// Enable LayoutAnimation for Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
-/**
- * COMPONENT: CartItemCard
- * Featuring an expandable "Ingredients" section
- */
 const CartItemCard = ({ item, onIncrease, onDecrease }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -183,7 +175,7 @@ export default function Cart({ navigation }) {
           buttonName="Browse Menu"
         />
       ) : (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, paddingHorizontal: PADDINGS.horizonatal }}>
           <View style={styles.listWrapper}>
             <SwipeProduct navigation={navigation} />
           </View>
@@ -200,12 +192,10 @@ export default function Cart({ navigation }) {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    paddingHorizontal: 35,
-    paddingTop: 50 
   },
   listWrapper: { 
     flex: 1, 
-    marginTop: 20 
+    marginTop: 20,
   },
   cardWrapper: { 
     paddingVertical: 10, 

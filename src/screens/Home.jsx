@@ -1,26 +1,21 @@
-import * as React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerItemList,
 } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { COLORS, SIZES, SHADOWS } from "../constants";
 import DefaultHome from '../components/DefaultHome';
 import Favourite from '../components/Favourite';
 import Account from '../components/Account';
 import History from '../components/History';
-import Orders from './Orders';
 
 const Tab = createBottomTabNavigator();
 
-/** 1. BEAUTIFIED BOTTOM TAB **/
 function BottomTab() {
   return (
     <Tab.Navigator screenOptions={({ route }) => ({
@@ -53,9 +48,15 @@ function BottomTab() {
       tabBarShowLabel: false,
       tabBarStyle: styles.floatingTabStyle,
       tabBarItemStyle: {
-        alignSelf: 'center'
+        height: 65,
+        justifyContent: 'center',
+        alignItems: 'center',
       },
-    })}>
+      tabBarIconStyle: {
+        height: '100%',
+      }
+    })}
+    >
       <Tab.Screen name='Homepage' component={DefaultHome} />
       <Tab.Screen name='Favorite' component={Favourite} />
       <Tab.Screen name='Account' component={Account} />
@@ -64,19 +65,52 @@ function BottomTab() {
   );
 }
 
-/** 2. CLEAN DRAWER CONTENT **/
+/** 2. UPDATED CLEAN DRAWER CONTENT **/
 function CustomDrawerContent(props) {
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.drawerHeader}>
+      <TouchableOpacity activeOpacity={0.7} style={styles.drawerHeader} onPress={() => props.navigation.navigate('Home', { screen: 'Account' })}>
          <View style={styles.drawerProfileCircle}>
             <MaterialIcons name="person" size={40} color={COLORS.primary} />
          </View>
          <Text style={styles.drawerName}>Naorem Hemlet</Text>
-      </View>
+      </TouchableOpacity>
 
       <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 10 }}>
-        <DrawerItemList {...props} />
+        {/* RE-ROUTING DRAWER ITEMS */}
+        <TouchableOpacity 
+          style={[styles.drawerItem, styles.activeDrawerItem]} 
+          onPress={() => props.navigation.navigate('Home')}
+        >
+          <MaterialIcons name='home' size={22} color={COLORS.white} />
+          <Text style={styles.drawerLabel}>Home</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.drawerItem} 
+          onPress={() => props.navigation.navigate('Orders')}
+        >
+          <MaterialCommunityIcons name='shopping-outline' size={22} color={COLORS.white} />
+          <Text style={styles.drawerLabel}>Orders</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.drawerItem} 
+          onPress={() => props.navigation.navigate('Setting')}
+        >
+          <Ionicons name='settings-outline' size={22} color={COLORS.white} />
+          <Text style={styles.drawerLabel}>Settings</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.drawerItem} 
+          onPress={() => props.navigation.navigate('Privacy')}
+        >
+          <Ionicons name='lock-closed-outline' size={22} color={COLORS.white} />
+          <Text style={styles.drawerLabel}>Privacy</Text>
+        </TouchableOpacity>
+
       </DrawerContentScrollView>
 
       <TouchableOpacity 
@@ -99,32 +133,15 @@ export default function Home() {
       screenOptions={{
         headerShown: false,
         drawerType: 'slide',
-        overlayColor: 'transparent', // Modern slide look
+        overlayColor: 'transparent',
         drawerStyle: styles.drawerContainerStyle,
-        drawerActiveBackgroundColor: 'rgba(255,255,255,0.15)',
-        drawerActiveTintColor: COLORS.white,
-        drawerInactiveTintColor: 'rgba(255,255,255,0.7)',
-        drawerLabelStyle: styles.drawerLabel,
-        drawerItemStyle: styles.drawerItem
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="Home" component={BottomTab} options={{
-        drawerIcon: ({ color }) => <MaterialIcons name='home' size={22} color={color} />
-      }} />
-      <Drawer.Screen name="Orders" component={Orders} options={{
-        drawerIcon: ({ color }) => <MaterialCommunityIcons name='shopping-outline' size={22} color={color} />
-      }} />
-      <Drawer.Screen name="Settings" component={BottomTab} options={{
-        drawerIcon: ({ color }) => <Ionicons name='settings-outline' size={22} color={color} />
-      }} />
-      <Drawer.Screen name="Security" component={BottomTab} options={{
-        drawerIcon: ({ color }) => <Ionicons name='shield-checkmark-outline' size={22} color={color} />
-      }} />
+      <Drawer.Screen name="Home" component={BottomTab} />
     </Drawer.Navigator>
   );
 }
-
 
 const styles = StyleSheet.create({
   // Tab Styling
@@ -134,11 +151,11 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     backgroundColor: COLORS.white,
-    borderRadius: 25,
+    borderRadius: 32,
     height: 65,
+    ...SHADOWS.medium, 
+    marginHorizontal: 10,
     borderTopWidth: 0,
-    ...SHADOWS.medium,
-    paddingBottom: Platform.OS === 'ios' ? 0 : 0, 
   },
   tabIconWrapper: {
     width: 42,
@@ -148,14 +165,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabActiveBg: {
-    backgroundColor: COLORS.primary + '10', // Soft primary tint
+    backgroundColor: COLORS.primary + '10',
   },
 
   // Drawer Styling
   drawerContainerStyle: {
     backgroundColor: COLORS.primary,
     width: '70%',
-    paddingTop: 40,
+    paddingTop: 20,
+    borderTopEndRadius: 20,
+    borderBottomEndRadius: 20,
   },
   drawerHeader: {
     paddingHorizontal: 30,
@@ -175,18 +194,29 @@ const styles = StyleSheet.create({
   },
   drawerName: {
     color: COLORS.white,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '900'
   },
   drawerLabel: {
     fontSize: 15,
-    fontWeight: '700',
-    marginLeft: -10
+    fontWeight: '600',
+    color: COLORS.white,
+    marginLeft: 10,
+    
   },
   drawerItem: {
-    borderRadius: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 30,
     marginVertical: 4,
-    paddingHorizontal: 10
+    paddingHorizontal: 25,
+    paddingVertical: 15,
+    opacity: 0.7,
+  },
+
+  activeDrawerItem: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    opacity: 1,
   },
 
   // Sign Out
@@ -204,192 +234,3 @@ const styles = StyleSheet.create({
     opacity: 0.9
   }
 });
-
-// import * as React from 'react';
-// import { View, Text, Image, Pressable, StyleSheet, SafeAreaView } from 'react-native';
-// import { NavigationContainer } from '@react-navigation/native';
-// import {
-//   createDrawerNavigator,
-//   DrawerContentScrollView,
-//   DrawerItemList,
-//   DrawerItem,
-//   useDrawerProgress,
-// } from '@react-navigation/drawer';
-// import Animated, { useAnimatedStyle, interpolate } from 'react-native-reanimated';
-// import { COLORS, SIZES } from "../constants"
-// import DefaultHome from '../components/DefaultHome';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { MaterialIcons, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-// import Favourite from '../components/Favourite';
-// import Account from '../components/Account';
-// import History from '../components/History';
-// import { TouchableOpacity } from 'react-native-gesture-handler';
-// import Orders from './Orders';
-
-
-
-// const Tab = createBottomTabNavigator();
-
-// function BottomTab({ navigation }) {
-//   return (
-//     <Tab.Navigator screenOptions={({ route }) => ({
-//       tabBarIcon: ({ focused, color, size }) => {
-//         switch (route.name) {
-
-//           case 'Homepage':
-//             return (
-//               <TouchableOpacity>
-//                 <MaterialCommunityIcons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
-//               </TouchableOpacity>
-//             )
-//           case 'Favorite':
-//             return (
-//               <TouchableOpacity>
-//                 <MaterialIcons name={focused ? 'favorite' : 'favorite-outline'} size={size - 2} color={color} />
-//               </TouchableOpacity>
-//             )
-//           case 'Account':
-//             return (
-//               <TouchableOpacity>
-//                 <Ionicons name={focused ? 'person' : 'person-outline'} size={size - 3} color={color} />
-//               </TouchableOpacity>
-//             )
-//           case 'History':
-//             return (
-//               <TouchableOpacity>
-//                 <MaterialIcons name="history" size={size} color={color} />
-//               </TouchableOpacity>
-//             )
-//         }
-//       },
-//       tabBarActiveTintColor: COLORS.primary,
-//       tabBarInactiveTintColor: 'gray',
-//       headerShown: false,
-//       tabBarShowLabel: false,
-//       tabBarStyle: {
-//         backgroundColor: COLORS.lightWhite,
-//         borderTopWidth: 0,
-//         elevation: 0,
-//         marginBottom: 20
-//       }
-//     })}>
-//       <Tab.Screen name='Homepage' component={DefaultHome} />
-//       <Tab.Screen name='Favorite' component={Favourite} />
-//       <Tab.Screen name='Account' component={Account} />
-//       <Tab.Screen name='History' component={History} />
-//     </Tab.Navigator>
-//   )
-// }
-
-
-// function SignOut({ signOut }) {
-//   return (
-//     <TouchableOpacity style={styles.signoutcontainer} onPress={signOut}>
-//       <Text style={styles.signouttext}>Sign-out</Text>
-//       <MaterialIcons name='arrow-right-alt' size={24} color={COLORS.white} />
-//     </TouchableOpacity>
-//   )
-// }
-
-// const styles = StyleSheet.create({
-//   signoutcontainer: {
-//     display: 'flex',
-//     flexDirection: 'row',
-//     alignSelf: 'flex-end',
-//     paddingRight: 50
-//   },
-//   signouttext: {
-//     color: COLORS.white,
-//     fontWeight: 600,
-//     fontSize: SIZES.medium
-//   }
-// })
-
-
-// function CustomDrawerContent(props) {
-
-//   const progress = useDrawerProgress();
-
-//   // const translateX = interpolate(progress.value, [0, 1], [0, 1]);
-
-//   const animatedStyle = useAnimatedStyle(() => ({
-//     transform: [
-//       {
-//         translateX: interpolate(progress.value, [0, 1], [0, 1]),
-//       },
-//     ],
-//   }));
-
-//   return (
-//     <SafeAreaView style={{ flex: 1 }} forceInset={{ top: "always", horizontal: "never" }}>
-//       <DrawerContentScrollView {...props}>
-//         <Animated.View style={animatedStyle}>
-//           <DrawerItemList {...props} />
-//         </Animated.View>
-//       </DrawerContentScrollView>
-
-//       <SignOut signOut={() => 
-//       props.navigation.reset({
-//         index: 0,
-//         routes: [{ name: "Login" }],
-//       })} />
-//     </SafeAreaView>
-//   );
-// }
-
-// const Drawer = createDrawerNavigator();
-
-
-// export default function Home() {
-//   return (
-//     <Drawer.Navigator
-//       screenOptions={{
-//         headerShown: false,
-//         drawerLabelStyle: {
-//           fontSize: SIZES.medium,
-//           fontWeight: 600
-//         },
-//         drawerItemStyle: {
-//           borderRadius: 0,
-//           padding: 0,
-//           margin: 0
-//         },
-//         drawerStyle: {
-//           backgroundColor: COLORS.primary,
-//           paddingLeft: 20,
-//           paddingVertical: 50
-//         },
-//         drawerActiveTintColor: 'white',
-//         drawerInactiveTintColor: 'white',
-//       }}
-//       useLegacyImplementation
-//       drawerContent={(props) => <CustomDrawerContent {...props} />}
-//     >
-//       <Drawer.Screen name="Home" component={BottomTab} options={{
-//         drawerIcon: ({ focused, size, color }) => (
-//           <MaterialIcons name='home' size={size} color={color} />
-//         )
-//       }} />
-//       <Drawer.Screen name="Account" component={Account} options={{
-//         drawerIcon: ({ focused, size, color }) => (
-//           <MaterialCommunityIcons name='account-circle-outline' size={size} color={color} />
-//         )
-//       }} />
-//       <Drawer.Screen name="Order" component={Orders} options={{
-//         drawerIcon: ({ focused, size, color }) => (
-//           <MaterialCommunityIcons name='cart-check' size={size} color={color} />
-//         )
-//       }} />
-//       <Drawer.Screen name="Privacy" component={BottomTab} options={{
-//         drawerIcon: ({ focused, size, color }) => (
-//           <MaterialCommunityIcons name='clipboard-outline' size={size} color={color} />
-//         )
-//       }} />
-//       <Drawer.Screen name="Security" component={BottomTab} options={{
-//         drawerIcon: ({ focused, size, color }) => (
-//           <MaterialCommunityIcons name='security' size={size} color={color} />
-//         )
-//       }} />
-//     </Drawer.Navigator>
-//   );
-// }

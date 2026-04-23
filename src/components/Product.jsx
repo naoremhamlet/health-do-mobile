@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { COLORS, SHADOWS, image } from '../constants';
+import { COLORS, PADDINGS, SHADOWS, image } from '../constants';
 
 export default function Product({ item, navigation }) {
   const title = item?.title || "Avocado Mix Green";
@@ -22,9 +22,6 @@ export default function Product({ item, navigation }) {
                     <MaterialCommunityIcons name="leaf" size={12} color="#388e3c" />
                     <Text style={styles.freshText}>FRESH</Text>
                 </View>
-                {/* <TouchableOpacity activeOpacity={0.7}>
-                    <Ionicons name="heart-outline" size={20} color={COLORS.gray} />
-                </TouchableOpacity> */}
             </View>
 
             {/* 2. PRODUCT IMAGE */}
@@ -63,7 +60,7 @@ const styles = StyleSheet.create({
         width: 220,
         height: 280,
         marginTop: 40,
-        marginRight: 20,
+        marginLeft: 20,
         justifyContent: 'flex-end',
     },
     mainCard: {

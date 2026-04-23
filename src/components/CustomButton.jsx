@@ -1,6 +1,6 @@
 import React from 'react'
-import { Pressable, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
-import { COLORS, SIZES } from '../constants';
+import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { COLORS, SHADOWS, SIZES } from '../constants';
 
 export default function CustomButton({title, goto, additionalStyle, buttonStyle}) {
   return (
@@ -14,19 +14,24 @@ export default function CustomButton({title, goto, additionalStyle, buttonStyle}
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
-    justifyContent: 'flex-end',
-    marginBottom: 35,
-    width: '100%',
-    alignSelf:'center',
-    minHeight: 70
+    position: 'absolute', // Locks it to the screen
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 35,
+    paddingBottom: 30,
+    backgroundColor: 'transparent',
   },
   button: {
-    padding: 20,
-    width: 280,
+    height: 70,
+    width: '100%',
     backgroundColor: COLORS.primary,
-    borderRadius: 30,
-    alignSelf: 'center',
+    borderRadius: 35, // Modern smooth corner
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    ...SHADOWS.medium,
+    elevation: 5,
   },
   buttonTitle: {
     fontSize: SIZES.medium,

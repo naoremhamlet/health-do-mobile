@@ -14,7 +14,7 @@ const COLORS = {
 
   wrapper: "#3a3737cc",
 
-  placehoder: "rgba(0, 0, 0, 0.5)"
+  placehoder: "#83829A70"
 };
 
 const FONT = {
@@ -56,4 +56,9 @@ const SHADOWS = {
   },
 };
 
-export { COLORS, FONT, SIZES, SHADOWS };
+const PADDINGS = {
+  horizonatal: 25,
+  top: 10
+}
+
+export { COLORS, FONT, SIZES, SHADOWS, PADDINGS};
