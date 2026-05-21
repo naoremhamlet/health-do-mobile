@@ -122,6 +122,8 @@ export default function Login({ navigation }) {
             }
         }
 
+        validate = true;
+
         if(validate) {
             navigation.navigate("Homepage");
         }    

@@ -1,11 +1,12 @@
 import { Octicons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity, Modal, Pressable, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS, PADDINGS, SHADOWS } from '../constants'
 import ProductSmall from '../components/ProductSmall'
 import { useRoute } from '@react-navigation/native'
 import TopHeader from '../components/TopHeader'
+import { filterProducts, getProducts, sortProducts } from '../helper'
 
 
 const SearchInput = ({  searchPhrase, setSearchPhrase }) => {
@@ -35,11 +36,18 @@ export default function Products({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState(route.params?.keyword || "");
   const [showSort, setShowSort] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("Popular");
+  const [selectedSort, setSelectedSort] = useState("Newest");
   const [activeFilters, setActiveFilters] = useState([]);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    sortProducts(selectedSort);
+    setData(getProducts());
+    setShowSort(false); 
+  }, [selectedSort])
 
   // --- Mock Data & Options ---
-  const data = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}];
+  
   const sortOptions = ["Popular", "Price: Low to High", "Price: High to Low", "Newest"];
   const lifestyleFilters = ["Veg Only", "Vegan", "High Protein", "Low Carb", "Gluten-Free"];
   const priceFilters = ["Under ₹199", "₹200 - ₹500", "Above ₹500"];
@@ -66,7 +74,7 @@ export default function Products({ navigation }) {
         {/* UTILITY BAR (Results count + Action Icons) */}
         <View style={styles.utilityBar}>
           <View style={styles.countContainer}>
-            <Text style={styles.resultCountText}>{data.length}</Text>
+            <Text style={styles.resultCountText}>{data?.length}</Text>
             <Text style={styles.resultLabel}>Items Found</Text>
           </View>
 
@@ -109,7 +117,10 @@ export default function Products({ navigation }) {
               <TouchableOpacity 
                 key={option} 
                 style={styles.menuItem} 
-                onPress={() => { setSelectedSort(option); setShowSort(false); }}
+                onPress={() => { 
+                  setSelectedSort(option); 
+                }
+              }
               >
                 <Text style={[styles.menuItemText, selectedSort === option && styles.activeMenuText]}>{option}</Text>
                 {selectedSort === option && <Ionicons name="checkmark-circle" size={22} color={COLORS.primary} />}
@@ -120,13 +131,17 @@ export default function Products({ navigation }) {
       </Modal>
 
       {/* --- FILTER MODAL --- */}
-      <Modal visible={showFilter} transparent animationType="slide" onRequestClose={() => setShowFilter(false)}>
+      <Modal visible={showFilter} transparent animationType="fade" onRequestClose={() => setShowFilter(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setShowFilter(false)}>
           <View style={[styles.sheet, { minHeight: '50%' }]}>
             <View style={styles.modalKnob} />
             <View style={styles.modalHeaderRow}>
                 <Text style={styles.modalTitle}>Filters</Text>
-                <TouchableOpacity onPress={() => setActiveFilters([])}>
+                <TouchableOpacity 
+                  onPress={() => {
+                    setActiveFilters([])
+                  }
+                }>
                     <Text style={styles.resetLink}>Reset All</Text>
                 </TouchableOpacity>
             </View>
@@ -157,7 +172,15 @@ export default function Products({ navigation }) {
                 ))}
             </View>
 
-            <TouchableOpacity style={styles.applyBtn} onPress={() => setShowFilter(false)}>
+            <TouchableOpacity 
+                style={styles.applyBtn}
+                onPress={() => {
+                  filterProducts(activeFilters);
+                  sortProducts(selectedSort);
+                  setData(getProducts());
+                  setShowFilter(false);
+                }
+              }>
                 <Text style={styles.applyBtnText}>Apply Filters</Text>
             </TouchableOpacity>
           </View>

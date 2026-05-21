@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Feather, FontAwesome5, Ionicons, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
+import { Feather, FontAwesome5, Ionicons, MaterialCommunityIcons, MaterialIcons, Octicons } from '@expo/vector-icons';
 import TopHeader from '../components/TopHeader';
-import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants';
+import { COLORS, SIZES, SHADOWS, PADDINGS } from '../constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateAccount } from '../store/reducer/account';
 import EditAccount from './EditAccount';
@@ -13,18 +13,24 @@ const ProfileCard = ({ detail }) => {
   return (
     <View style={[styles.profileCard, SHADOWS.small]}>
       <View style={styles.imageWrapper}>
-        <Image source={detail.profileImage || image.avatar} style={styles.avatar} />
+        {detail.profileImage ?
+          <Image source={detail.profileImage} style={styles.avatar} />
+          : <View style={styles.avatar}>
+            <MaterialIcons name="person" size={65} color={COLORS.primary} />
+          </View>
+        }
+
         <View style={styles.statusDot} />
       </View>
       <View style={styles.infoWrapper}>
         <Text style={styles.profileName} numberOfLines={1}>{detail.name}</Text>
         <View style={styles.contactRow}>
-            <Ionicons name="call-outline" size={14} color={COLORS.gray} />
-            <Text style={styles.contactText}>{detail.phone}</Text>
+          <Ionicons name="call-outline" size={14} color={COLORS.gray} />
+          <Text style={styles.contactText}>{detail.phone}</Text>
         </View>
         <View style={styles.contactRow}>
-            <Ionicons name="mail-outline" size={14} color={COLORS.gray} />
-            <Text style={styles.contactText}>{detail.email}</Text>
+          <Ionicons name="mail-outline" size={14} color={COLORS.gray} />
+          <Text style={styles.contactText}>{detail.email}</Text>
         </View>
       </View>
     </View>
@@ -34,30 +40,31 @@ const ProfileCard = ({ detail }) => {
 const MenuRow = ({ title, subtitle, icon, type = "Ionicons", onPress, notavailable = false }) => {
   const IconComp = type === "Ionicons" ? Ionicons : MaterialCommunityIcons;
   return (
-  <TouchableOpacity 
-    style={styles.menuRow} 
-    onPress={onPress} 
-    disabled={type === 'switch'}
-    activeOpacity={0.7}
-  >
-    <View style={[styles.iconBox, { backgroundColor: COLORS.primary + '10' }]}>
-      <IconComp name={icon} size={20} color={COLORS.primary} />
-    </View>
-    
-    <View style={styles.textContainer}>
-      <Text style={styles.menuTitle}>{title}</Text>
-      {subtitle && <Text style={styles.menuSubtitle}>{subtitle}</Text>}
-    </View>
+    <TouchableOpacity
+      style={styles.menuRow}
+      onPress={onPress}
+      disabled={type === 'switch'}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.iconBox, { backgroundColor: COLORS.primary + '10' }]}>
+        <IconComp name={icon} size={20} color={COLORS.primary} />
+      </View>
+
+      <View style={styles.textContainer}>
+        <Text style={styles.menuTitle}>{title}</Text>
+        {subtitle && <Text style={styles.menuSubtitle}>{subtitle}</Text>}
+      </View>
 
       {notavailable &&
         <View style={styles.comingSoonBadge}>
-            <Text style={styles.comingSoonText}>COMING SOON</Text>
+          <Text style={styles.comingSoonText}>COMING SOON</Text>
         </View>
       }
-      {notavailable ? <Ionicons name="lock-closed-outline" size={16} color={COLORS.gray} /> : <Feather name="chevron-right" size={18} color={COLORS.gray} /> }
-    
-  </TouchableOpacity>
-)};
+      {notavailable ? <Ionicons name="lock-closed-outline" size={16} color={COLORS.gray} /> : <Feather name="chevron-right" size={18} color={COLORS.gray} />}
+
+    </TouchableOpacity>
+  )
+};
 
 export default function Account({ navigation }) {
   const [active, setActive] = useState()
@@ -79,17 +86,17 @@ export default function Account({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopHeader title="Profile" goto={() => navigation.goBack()} />
-      
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
+
         <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>Personal Details</Text>
-            <TouchableOpacity onPress={() => setActive("EditAccount")} style={styles.editBtn}>
-                <FontAwesome5 name="edit" size={14} color={COLORS.primary} />
-                <Text style={styles.editBtnText}>Update</Text>
-            </TouchableOpacity>
+          <Text style={styles.sectionLabel}>Personal Details</Text>
+          <TouchableOpacity onPress={() => setActive("EditAccount")} style={styles.editBtn}>
+            <FontAwesome5 name="edit" size={14} color={COLORS.primary} />
+            <Text style={styles.editBtnText}>Update</Text>
+          </TouchableOpacity>
         </View>
-        
+
         <ProfileCard detail={detail} />
 
         {/* ACTIVITY SECTION */}
@@ -97,16 +104,16 @@ export default function Account({ navigation }) {
         <View style={[styles.sectionCard, SHADOWS.small]}>
           <View style={styles.divider} />
           <MenuRow
-            icon="shopping-outline" 
+            icon="shopping-outline"
             type='MaterialCommunityIcons'
-            title="Orders" 
-            onPress={() => navigation.navigate("Orders")} 
+            title="Orders"
+            onPress={() => navigation.navigate("Orders")}
           />
           <View style={styles.divider} />
-          <MenuRow 
-            icon="location-outline" 
-            title="Address" 
-            onPress={() => navigation.navigate("Address")} 
+          <MenuRow
+            icon="location-outline"
+            title="Address"
+            onPress={() => navigation.navigate("Address")}
           />
         </View>
 
@@ -114,8 +121,8 @@ export default function Account({ navigation }) {
         <View style={[styles.sectionCard, SHADOWS.small]}>
           <View style={styles.divider} />
           <MenuRow
-            icon="diamond-outline" 
-            title="Healthy+" 
+            icon="diamond-outline"
+            title="Healthy+"
             notavailable
           />
         </View>
@@ -124,15 +131,15 @@ export default function Account({ navigation }) {
         <View style={[styles.sectionCard, SHADOWS.small]}>
           <View style={styles.divider} />
           <MenuRow
-            icon="help-circle-outline" 
-            title="FAQ" 
-            onPress={() => navigation.navigate("Faq")} 
+            icon="help-circle-outline"
+            title="FAQ"
+            onPress={() => navigation.navigate("Faq")}
           />
           <View style={styles.divider} />
-          <MenuRow 
-            icon="chatbubble-ellipses-outline" 
-            title="Support" 
-            onPress={() => navigation.navigate("Support")} 
+          <MenuRow
+            icon="chatbubble-ellipses-outline"
+            title="Support"
+            onPress={() => navigation.navigate("Support")}
           />
         </View>
 

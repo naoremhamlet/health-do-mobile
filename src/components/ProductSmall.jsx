@@ -5,11 +5,9 @@ import { COLORS, SHADOWS, SIZES, image } from '../constants'
 
 export default function ProductSmall({ item, navigation }) {
   // Mock data - in a real app, these come from the 'item' prop
-  const price = item?.price || 150;
-  const originalPrice = 190;
-  const discount = "21% off";
-  const rating = "4.5";
-  const reviewCount = "120";
+  const price = item?.price;
+  const originalPrice = item?.originalPrice || price;
+  const discount = Math.ceil((originalPrice-price)*100/price);
 
   return (
     <Pressable 
@@ -19,29 +17,29 @@ export default function ProductSmall({ item, navigation }) {
         <View style={[styles.card, SHADOWS.small]}>
             {/* 1. PRODUCT IMAGE */}
             <View style={styles.imageContainer}>
-                <Image source={image.item1} style={styles.image} resizeMode="contain" />
+                <Image source={item?.image} style={styles.image} resizeMode="contain" />
             </View>
 
             {/* 2. PRODUCT INFO */}
             <View style={styles.infoContainer}>
-                <Text style={styles.brand}>HEALTHY BOWL</Text>
-                <Text style={styles.title} numberOfLines={1}>Avocado Mix Green</Text>
+                <Text style={styles.brand}>{item?.category.toUpperCase()}</Text>
+                <Text style={styles.title} numberOfLines={1}>{item?.name}</Text>
                 
                 {/* 3. RATING SECTION (New) */}
                 <View style={styles.ratingRow}>
                     <View style={styles.ratingBadge}>
-                        <Text style={styles.ratingText}>{rating}</Text>
+                        <Text style={styles.ratingText}>{item?.rating}</Text>
                         <Ionicons name="star" size={10} color={COLORS.white} />
                     </View>
-                    <Text style={styles.reviewText}>({reviewCount})</Text>
+                    <Text style={styles.reviewText}>({item?.reviewCount})</Text>
                 </View>
 
                 {/* 4. E-COMMERCE PRICE ROW */}
                 <View style={styles.priceRow}>
-                    <Text style={styles.price}>₹{price}</Text>
-                    <Text style={styles.oldPrice}>₹{originalPrice}</Text>
+                    <Text style={styles.price}>{`₹${item?.price}`}</Text>
+                    <Text style={styles.oldPrice}>{item?.originalPrice? `₹${item?.originalPrice}` : ""}</Text>
                 </View>
-                <Text style={styles.discountText}>{discount}</Text>
+                <Text style={styles.discountText}>{discount ? `${discount}% off` : " "}</Text>
             </View>
         </View>
     </Pressable>

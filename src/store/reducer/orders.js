@@ -3,16 +3,51 @@ import { createSlice } from '@reduxjs/toolkit'
 const orderSlice = createSlice({
     name: 'order',
     initialState: {
-        cart: [
-            {id: 1, quantity: 3, status: "delivered"},
-            {id: 2, quantity: 1, status: "cancelled"},
-            {id: 3, quantity: 1, status: "transit"},
-            {id: 4, quantity: 1, status: "packaging"}
+        order: [
+            {
+                id: 1, 
+                items: [
+                    {
+                        id: 1,
+                        quantity: 3,
+                        
+                    },
+                    {
+                        id: 2,
+                        quantity: 1,
+                    }
+                ],
+                status: "delivered"
+            },
+            {
+                id: 2, 
+                items: [
+                    {
+                        id: 1,
+                        quantity: 1,
+                    },
+                    {
+                        id: 2,
+                        quantity: 1,
+                    }
+                ],
+                status: "delivered"
+            },
+            {
+                id: 3, 
+                items: [
+                    {
+                        id: 1,
+                        quantity: 2,    
+                    }
+                ],
+                status: "packaging"
+            },
         ]
     },
     reducers: {
         updateOrder: (state, action) => {
-            state.cart = action.payload
+            state.order = action.payload
         }
     }
 })

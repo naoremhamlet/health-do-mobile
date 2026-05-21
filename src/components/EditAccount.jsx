@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, Tex
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SIZES, SHADOWS, image } from '../constants' 
-import { Ionicons, MaterialCommunityIcons, FontAwesome, Entypo, Feather } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, FontAwesome, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateAccount } from '../store/reducer/account';
 import TopHeader from './TopHeader';
@@ -49,7 +49,7 @@ export default function EditAccount({ goBack }) {
     const [name, setName] = useState(detail.name)
     const [email, setEmail] = useState(detail.email)
     const [phone, setPhone] = useState(detail.phone)
-    const [profileImage, setProfileImage] = useState(detail.profileImage || image.avatar)
+    const [profileImage, setProfileImage] = useState(detail.profileImage)
 
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -96,7 +96,13 @@ export default function EditAccount({ goBack }) {
                 {/* 1. Profile Image Section */}
                 <View style={styles.imageSection}>
                     <View style={styles.imgContainer}>
-                        <Image source={profileImage?.uri ? { uri: profileImage.uri } : profileImage} style={styles.detailImg} />
+                        {(profileImage || profileImage?.uri) ?
+                            <Image source={profileImage?.uri ? { uri: profileImage.uri } : profileImage} style={styles.detailImg} />
+                            :   <View style={styles.detailImg}>
+                                    <MaterialIcons name='person' size={95} color={COLORS.primary} />
+                                </View>
+                        }
+                        
                         <TouchableOpacity style={[styles.cameraBtn, SHADOWS.small]} onPress={pickImage} activeOpacity={0.9}>
                             <Ionicons name="camera" size={18} color={COLORS.white} />
                         </TouchableOpacity>

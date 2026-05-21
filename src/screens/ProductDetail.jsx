@@ -8,7 +8,6 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants';
 import CustomButton from '../components/CustomButton';
 import { CustomCheckbox } from '../components/CustomCheckbox';
@@ -225,7 +224,6 @@ export default function ProductDetail({ navigation }) {
                 image: image.item1
             };
             dispatch(updateCart([...cart, newItem]));
-            navigation.navigate("Cart");
         }
     };
 
