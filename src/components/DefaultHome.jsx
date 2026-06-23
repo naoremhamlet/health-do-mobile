@@ -10,12 +10,12 @@ import { COLORS, SIZES, SHADOWS, FONT, PADDINGS } from '../constants';
 // Components
 import SearchBar from './SearchBar';
 import Product from './Product';
-
-const data = [ {id: 1}, {id: 2}, {id: 3} ]
+import { getProducts } from '../helper';
 
 /** 1. PRODUCT LIST WITH SEE-MORE CARD **/
 const Products = ({ navigation }) => {
   // Append a special item for the "See More" card
+  const data = getProducts();
   const displayData = [...data, { id: 'see-more', type: 'link' }];
 
   return (

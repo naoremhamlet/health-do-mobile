@@ -22,16 +22,13 @@ import Error from '../components/Error';
 import { updateCart } from '../store/reducer/cart';
 import { updateFavourites } from '../store/reducer/favourites';
 import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants';
+import { getProductById } from '../helper';
 
 
 const CartItemCard = ({ item, onIncrease, onDecrease }) => {
   const [expanded, setExpanded] = useState(false);
-
-  const dummyItem = {
-    name: "Vegetable Mix Omlete",
-    price: "160",
-    ingredients: ["Carrrot", "Cabbage", "Roasted Chicken", "Tortillas"]
-  }
+  
+  const data = getProductById(item?.id);
 
   const toggleExpand = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -42,7 +39,7 @@ const CartItemCard = ({ item, onIncrease, onDecrease }) => {
     <View style={[styles.card, SHADOWS.small]}>
       <View style={styles.mainRow}>
         {/* Product Image */}
-        <Image source={item.image || image.item1} style={styles.productImg} />
+        <Image source={data?.image[0]} style={styles.productImg} />
 
         {/* Content Container */}
         <View style={styles.contentContainer}>
@@ -51,10 +48,10 @@ const CartItemCard = ({ item, onIncrease, onDecrease }) => {
             onPress={toggleExpand}
             activeOpacity={0.7}
           >
-            <Text style={styles.productName} numberOfLines={1}>{dummyItem.name}</Text>
+            <Text style={styles.productName} numberOfLines={1}>{data?.name}</Text>
             <View style={styles.priceContainer}>
-              <Text style={styles.productPrice}>₹{dummyItem.price}</Text>
-              {dummyItem.ingredients && (
+              <Text style={styles.productPrice}>₹{data?.price}</Text>
+              {data?.ingredients && (
                 <View style={styles.detailTrigger}>
                   <Text style={styles.detailTriggerText}>Details</Text>
                   <Ionicons 
@@ -81,12 +78,12 @@ const CartItemCard = ({ item, onIncrease, onDecrease }) => {
       </View>
 
       {/* EXPANDABLE DETAILS SECTION */}
-      {expanded && dummyItem.ingredients && (
+      {expanded && data?.ingredients && (
         <View style={styles.expandedSection}>
           <View style={styles.divider} />
           <Text style={styles.ingredientsHeading}>Customized Ingredients:</Text>
           <View style={styles.ingredientsList}>
-            {dummyItem.ingredients.map((ing, idx) => (
+            {data?.ingredients.map((ing, idx) => (
               <View key={idx} style={styles.ingredientBadge}>
                 <Text style={styles.ingredientText}>{ing}</Text>
               </View>

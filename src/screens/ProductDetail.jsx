@@ -14,6 +14,7 @@ import { CustomCheckbox } from '../components/CustomCheckbox';
 import { updateFavourites } from '../store/reducer/favourites';
 import { updateCart } from '../store/reducer/cart';
 import TopHeader from '../components/TopHeader';
+import { getProductById } from '../helper';
 
 const { width } = Dimensions.get('window');
 
@@ -44,7 +45,7 @@ const FreshnessIndicator = () => {
 }
 
 /** 3. PRODUCT IMAGES COMPONENT **/
-const ProductImages = () => {
+const ProductImages = ({image}) => {
     return (
         <View style={styles.imageBox}>
             <Swiper
@@ -59,7 +60,7 @@ const ProductImages = () => {
                 {[1, 2, 3].map((_, i) => (
                     <View key={i} style={styles.slide}>
                         <Image 
-                            source={image.item1} 
+                            source={image[i]} 
                             style={styles.heroImage} 
                             resizeMode="contain" 
                         />
@@ -81,9 +82,11 @@ const RatingInfo = ({ rating, reviews }) => {
 }
 
 /** 4. PRODUCT INFO WITH OFFER PRICING **/
-const ProductInfo = ({ title, price, offerPrice, rating, reviews }) => {
-    const discount = Math.round(((price - offerPrice) / price) * 100);
-    
+const ProductInfo = ({ title, price, originalPrice, rating, reviews }) => {
+
+    const new_originalPrice = originalPrice || price;
+    const discount = Math.ceil((new_originalPrice-price)*100/price);
+
     return (
         <View style={styles.infoWrapper}>
             <View style={styles.topRow}>
@@ -95,12 +98,14 @@ const ProductInfo = ({ title, price, offerPrice, rating, reviews }) => {
             </View>
             <View style={styles.priceContainer}>
                 <View style={styles.priceRow}>
-                    <Text style={styles.mainPrice}>₹{offerPrice}</Text>
-                    <Text style={styles.originalPrice}>₹{price}</Text>
+                    <Text style={styles.mainPrice}>{`₹${price}`}</Text>
+                    <Text style={styles.originalPrice}>{originalPrice? `₹${originalPrice}` : ""}</Text>
                 </View>
-                <View style={styles.discountBadge}>
-                    <Text style={styles.discountText}>{discount}% OFF</Text>
-                </View>
+                {discount?
+                    <View style={styles.discountBadge}>
+                        <Text style={styles.discountText}>{discount ? `${discount}% OFF` : " "}</Text>
+                    </View> : <View />
+                }
             </View>
         </View>
     )
@@ -187,21 +192,21 @@ const DeliverySelection = ({ address, onEdit }) => {
 /** MAIN COMPONENT **/
 export default function ProductDetail({ navigation }) {
     const route = useRoute();
+
+    const productId = route.params?.id || 1;
+
+    const item = getProductById(productId);
+
     const dispatch = useDispatch();
     const cart = useSelector(state => state.cart.cart);
     const favourites = useSelector(state => state.favourites.favourites);
     
-    const ingredientsList = ["Avocado", "Tortilla Chips", "Blackened Chicken", "Tomato", "Raw Carrot", "Hot Sauce", "Baby Spinach"];
-    const [customIn, setCustomIn] = useState(ingredientsList);
+    const [customIn, setCustomIn] = useState(item?.ingredients);
 
-    const productId = route.params?.id || 1;
+    
     const isFav = favourites.some(el => el.id === productId);
     const isAlreadyInCart = cart.some(el => el.id === productId);
 
-    // Dynamic Data for the "Elite" Update
-    const originalPrice = 200;
-    const currentOfferPrice = 160;
-    const productTitle = "Avocado Mix Green";
 
     const toggleFavourite = () => {
         if (isFav) {
@@ -215,14 +220,7 @@ export default function ProductDetail({ navigation }) {
         if(isAlreadyInCart) {
             navigation.navigate('Cart')
         } else {
-            const newItem = {
-                id: productId,
-                name: productTitle,
-                price: currentOfferPrice,
-                quantity: 1,
-                ingredients: customIn,
-                image: image.item1
-            };
+            const newItem = item;
             dispatch(updateCart([...cart, newItem]));
         }
     };
@@ -237,14 +235,14 @@ export default function ProductDetail({ navigation }) {
                 component={<TopSection isFav={isFav} toggleFavourite={toggleFavourite} />} />
             
             <ScrollView showsVerticalScrollIndicator={false}>
-                <ProductImages />
+                <ProductImages image={item?.image} />
                 <View style={styles.contentBody}>
                     <ProductInfo 
-                        title={productTitle} 
-                        price={originalPrice} 
-                        offerPrice={currentOfferPrice}
-                        rating={4.8}
-                        reviews={124}
+                        title={item?.name} 
+                        price={item?.price} 
+                        originalPrice={item?.originalPrice}
+                        rating={item?.rating}
+                        reviews={item?.reviewCount}
                     />
                     
                     <View style={styles.divider} />
@@ -258,7 +256,7 @@ export default function ProductDetail({ navigation }) {
                     <Customization 
                         customIn={customIn}
                         setCustomIn={setCustomIn}
-                        ingredientsList={ingredientsList} />
+                        ingredientsList={item?.ingredients} />
                     <AfterServiceInfo />
                 </View>
             </ScrollView>

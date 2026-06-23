@@ -4,10 +4,9 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, PADDINGS, SHADOWS, image } from '../constants';
 
 export default function Product({ item, navigation }) {
-  const title = item?.title || "Avocado Mix Green";
-  const price = 150;
-  const originalPrice = 190;
-  const discount = "21% off";
+  const price = item?.price;
+  const originalPrice = item?.originalPrice || price;
+  const discount = Math.ceil((originalPrice-price)*100/price);
 
   return (
     <Pressable 
@@ -18,36 +17,36 @@ export default function Product({ item, navigation }) {
             
             {/* 1. TOP BADGES & WISHLIST */}
             <View style={styles.topRow}>
-                <View style={styles.freshBadge}>
+                {item?.fresh && <View style={styles.freshBadge}>
                     <MaterialCommunityIcons name="leaf" size={12} color="#388e3c" />
                     <Text style={styles.freshText}>FRESH</Text>
-                </View>
+                </View>}
             </View>
 
             {/* 2. PRODUCT IMAGE */}
             <View style={styles.imageWrapper}>
-                <Image source={image.item1} style={styles.productImage} resizeMode="contain" />
+                <Image source={item?.image[0]} style={styles.productImage} resizeMode="contain" />
             </View>
 
             {/* 3. CONTENT AREA */}
             <View style={styles.bottomContent}>
-                <Text style={styles.brandName}>HEALTHY BOWL</Text>
-                <Text style={styles.productTitle} numberOfLines={1}>{title}</Text>
+                <Text style={styles.brandName}>{item?.category.toUpperCase()}</Text>
+                <Text style={styles.productTitle} numberOfLines={1}>{item?.name}</Text>
                 
                 {/* 4. PRICING ROW (Aligned horizontally like the screenshot) */}
                 <View style={styles.priceRow}>
-                    <Text style={styles.currentPrice}>₹{price}</Text>
-                    <Text style={styles.oldPrice}>₹{originalPrice}</Text>
-                    <Text style={styles.discountText}>{discount}</Text>
+                    <Text style={styles.currentPrice}>{`₹${item?.price}`}</Text>
+                    <Text style={styles.oldPrice}>{item?.originalPrice? `₹${item?.originalPrice}` : ""}</Text>
+                    <Text style={styles.discountText}>{discount ? `${discount}% off` : " "}</Text>
                 </View>
 
                 {/* 5. TRUST/RATING FOOTER */}
                 <View style={styles.footerRow}>
                     <View style={styles.ratingBox}>
-                        <Text style={styles.ratingText}>4.5</Text>
+                        <Text style={styles.ratingText}>{item?.rating}</Text>
                         <Ionicons name="star" size={10} color={COLORS.white} />
                     </View>
-                    <Text style={styles.reviewCount}>(120 reviews)</Text>
+                    <Text style={styles.reviewCount}>({item?.reviewCount})</Text>
                 </View>
             </View>
         </View>

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons' // Added for the star
 import { COLORS, SHADOWS, SIZES, image } from '../constants'
 
 export default function ProductSmall({ item, navigation }) {
-  // Mock data - in a real app, these come from the 'item' prop
+
   const price = item?.price;
   const originalPrice = item?.originalPrice || price;
   const discount = Math.ceil((originalPrice-price)*100/price);
@@ -17,7 +17,7 @@ export default function ProductSmall({ item, navigation }) {
         <View style={[styles.card, SHADOWS.small]}>
             {/* 1. PRODUCT IMAGE */}
             <View style={styles.imageContainer}>
-                <Image source={item?.image} style={styles.image} resizeMode="contain" />
+                <Image source={item?.image[0]} style={styles.image} resizeMode="contain" />
             </View>
 
             {/* 2. PRODUCT INFO */}
