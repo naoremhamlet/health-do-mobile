@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="063095a4-e5ca-452c-a601-37f5399b645d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Account.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Account.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/CustomButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CustomButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/DefaultHome.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/DefaultHome.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/EditAccount.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/EditAccount.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Favourite.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Favourite.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/History.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/History.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Popup/AddressPopup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Popup/AddressPopup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Popup/MyAddressPopup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Popup/MyAddressPopup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Popup/PaymentPopup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Popup/PaymentPopup.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Product.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Product.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/SearchBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SearchBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TopHeader.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TopHeader.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/theme.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/theme.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Address.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Address.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Cart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Cart.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Checkout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Checkout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Orders.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Orders.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/ProductDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/ProductDetail.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Products.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Products.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/Splash.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/Splash.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="3CZp8LevlZGHOIooogRuJHEIEbT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/naorem/Projects/mobile/healthdo&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="063095a4-e5ca-452c-a601-37f5399b645d" name="Changes" comment="" />
+      <created>1776602786964</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1776602786964</updated>
+    </task>
+    <servers />
+  </component>
+</project>
