@@ -1,175 +1,136 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Modal, Pressable, TouchableOpacity } from 'react-native'
-import { COLORS, SIZES } from '../../constants'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
+import { COLORS } from '../../constants'
 import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
+import PopupShell from './PopupShell';
 import { AddressPopup } from './AddressPopup';
+import { setSelectedAddress } from '../../store/reducer/address';
 
-
-const BodyItem = ({ title, content }) => {
+/** BEAUTIFIED BODY ITEM (Address Card inside Modal) **/
+const BodyItem = ({ address, isSelected }) => {
     return (
-        <View style={styles.bodyItem}>
-            <Text 
-                numberOfLines={1}
-                lineBreakMode='tail'
-                ellipsizeMode='tail'
-                style={styles.itemTitle}
-            >
-                Naorem Hemlet Singh
+        <View style={[styles.bodyItem, isSelected && styles.selectedBodyItem]}>
+            <Text style={[styles.itemTitle, isSelected && { color: COLORS.black }]}>
+                {address.type}
             </Text>
-            <Text 
+            <Text
                 style={styles.itemContent}
-                numberOfLines={1}
-                lineBreakMode='tail'
-                ellipsizeMode='tail'
+                numberOfLines={2}
             >
-                9366309563, Nambol Naorem Makha Leikai, Near Community Hall
+                {address.phone}, {address.address}
             </Text>
         </View>
     )
 }
 
-
-const PopupButton = ({title, func, style, color}) => {
-    return(
-        <TouchableOpacity style={style} onPress={func}>
-            <Text style={{ color: color, ...styles.buttonText}}>{title}</Text>
-        </TouchableOpacity>
-    )
-}
-
-const address = [{id:1}, {id:2}]
-
-export const DeliveryPopup = ({closePopup}) => {
+export const DeliveryPopup = ({ closePopup }) => {
     const [addEditAddress, setAddEditAddress] = useState(false)
-    const [addressId, setAddressId] = useState(1)
-    if(addEditAddress)
-        return <AddressPopup closePopup={()=> setAddEditAddress(false)} type="Add Address" />
-    else
-        return (
-            <Modal
-            transparent={true}
-            animationType='fade'>
-                <View style={styles.wrapper}>
-                    <View style={styles.container}>
-                        <View style={styles.heading}>
-                            <Text style={styles.header}>Select Address</Text>
-                        </View>
-                        <ScrollView style={styles.body}>
 
-                            {address && address.length ? 
-                                <RadioButtonGroup
-                                    radioStyle={{ borderColor: COLORS.primary }}
-                                    selected={addressId}
-                                    onSelected={value => setAddressId(value)}
-                                    radioBackground={COLORS.primary}
-                                >
-                                    {address.map(a => 
-                                        <RadioButtonItem
-                                            key={a.id}
-                                            style={styles.radioButton}
-                                            value={a.id}
-                                            label={<BodyItem />}
-                                        />
-                                    )}
-                                </RadioButtonGroup> : null}
+    const addresses = useSelector(state => state.address.addresses)
+    const selectedAddressId = useSelector(state => state.address.selectedAddressId)
+    const dispatch = useDispatch()
 
-                            <View style={styles.addButton}>
-                                <TouchableOpacity onPress={() => setAddEditAddress(true)}>
-                                    <Ionicons name='add-circle-outline' size={30} color={COLORS.primary}/>
-                                </TouchableOpacity>
-                            </View>
+    // Local draft selection — only committed to redux when "Confirm" is pressed,
+    // so backing out with "Cancel" doesn't change the real selection.
+    const [draftId, setDraftId] = useState(selectedAddressId)
 
-                        </ScrollView>
-                        <View style={styles.bottom}>
-                            <PopupButton
-                                title="Cancel"
-                                style={styles.cancelButton}
-                                color={COLORS.tertiary}
-                                func={closePopup}
-                            />
-                            <PopupButton
-                                title="Confirm"
-                                style={styles.confirmButton}
-                                color={COLORS.white}
-                                func={closePopup}
-                            />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+    if (addEditAddress)
+        return <AddressPopup closePopup={() => setAddEditAddress(false)} type="Add Address" />
+
+    return (
+        <PopupShell
+            title="Select Delivery Address"
+            onClose={closePopup}
+            secondaryAction={{ label: 'Cancel', onPress: closePopup }}
+            primaryAction={{
+                label: 'Confirm',
+                onPress: () => {
+                    dispatch(setSelectedAddress(draftId));
+                    closePopup();
+                },
+            }}
+        >
+            {addresses && addresses.length ? (
+                <RadioButtonGroup
+                    radioStyle={{ borderColor: COLORS.primary, width: 20, height: 20 }}
+                    selected={draftId}
+                    onSelected={value => setDraftId(value)}
+                    radioBackground={COLORS.primary}
+                >
+                    {addresses.map(a => (
+                        <RadioButtonItem
+                            key={a.id}
+                            style={styles.radioWrapper}
+                            value={a.id}
+                            label={<BodyItem address={a} isSelected={draftId === a.id} />}
+                        />
+                    ))}
+                </RadioButtonGroup>
+            ) : (
+                <Text style={styles.emptyText}>No saved addresses yet — add one below.</Text>
+            )}
+
+            <TouchableOpacity
+                style={styles.addAddressRow}
+                onPress={() => setAddEditAddress(true)}
+            >
+                <Ionicons name='add-circle' size={24} color={COLORS.primary} />
+                <Text style={styles.addText}>Add New Address</Text>
+            </TouchableOpacity>
+        </PopupShell>
     )
 }
-
 
 const styles = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-        justifyContent:'center',
-        backgroundColor: COLORS.wrapper,
-    },
-    container: { 
-        minHeight: 340,
-        maxHeight: 440,
-        backgroundColor: COLORS.white, 
-        marginHorizontal: 35, 
-        borderRadius: 30,
-        elevation: 5,
-        position: 'relative'
-    },
-    heading: {
-        backgroundColor:COLORS.background,
-        paddingVertical: 20,
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-    },
-    header: {
-        paddingHorizontal: 35,
-        fontSize: 15,
-        fontWeight: 600
-    },
-    body: {
-        marginHorizontal: 35,
-        marginBottom: 90,
+    radioWrapper: {
+        marginBottom: 15,
+        alignItems: 'center'
     },
     bodyItem: {
-        paddingVertical: 15,
-        paddingHorizontal: 10,
-        borderBottomWidth: 1,
-        opacity: 0.5,
+        flex: 1,
+        marginLeft: 15,
+        padding: 12,
+        borderRadius: 18,
+        backgroundColor: COLORS.softBg,
+        borderWidth: 1,
+        borderColor: 'transparent'
+    },
+    selectedBodyItem: {
+        backgroundColor: COLORS.primary + '08',
+        borderColor: COLORS.primary + '20',
     },
     itemTitle: {
-        fontSize: 14
+        fontSize: 14,
+        fontWeight: '700',
+        color: COLORS.gray,
+        marginBottom: 4
     },
-
-    addButton: {
-        display:"flex",
-        justifyContent:"center",
-        alignItems:'center',
-        paddingTop: 10,
+    itemContent: {
+        fontSize: 12,
+        color: COLORS.gray,
+        lineHeight: 18,
+        opacity: 0.8
     },
-    bottom: {
-        paddingHorizontal: 35,
-        paddingVertical: 25,
-        display: 'flex', 
-        flexDirection:"row", 
-        justifyContent:'space-between',
-        position:'absolute',
-        bottom: 0,
-        width: '100%'
-    },
-    confirmButton: {
-        backgroundColor: COLORS.primary,
-        paddingVertical: 20,
-        paddingHorizontal: 45,
-        borderRadius: 30
-    },
-    cancelButton: {
+    emptyText: {
+        fontSize: 13,
+        color: COLORS.gray,
+        textAlign: 'center',
         paddingVertical: 20,
     },
-    buttonText: {
-        fontSize: SIZES.medium,
-        fontWeight: 600
-    }
+    addAddressRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 10,
+        marginBottom: 10,
+        paddingVertical: 10
+    },
+    addText: {
+        marginLeft: 8,
+        fontSize: 14,
+        fontWeight: '700',
+        color: COLORS.primary
+    },
 })

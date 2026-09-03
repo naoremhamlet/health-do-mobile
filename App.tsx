@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Dimensions, KeyboardAvoidingView } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Splash from './src/screens/Splash';
 import Login from './src/screens/Login';
 import Home from './src/screens/Home';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Cart from './src/screens/Cart';
 import Products from './src/screens/Products';
 import ProductDetail from './src/screens/ProductDetail';
@@ -15,32 +15,35 @@ import Orders from './src/screens/Orders';
 
 import store from './src/store/store';
 import { Provider } from 'react-redux';
+import Address from './src/screens/Address';
+import Faq from './src/screens/Faq';
+import Support from './src/screens/Support';
+import PrivacyPolicy from './src/screens/Privacy';
+import Settings from './src/screens/Setting';
 
-const Stack = createStackNavigator()
+const Stack = createNativeStackNavigator()
 export default function App() {
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Splash" screenOptions={{headerShown: false}}>
-          <Stack.Screen name="Splash" component={Splash} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Homepage" component={Home} />
-          <Stack.Screen name="Cart" component={Cart} />
-          <Stack.Screen name="Products" component={Products} />
-          <Stack.Screen name="ProductDetail" component={ProductDetail} />
-          <Stack.Screen name="Checkout" component={Checkout} />
-          <Stack.Screen name="Orders" component={Orders} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
-    );
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Splash" screenOptions={{headerShown: false}}>
+            <Stack.Screen name="Splash" component={Splash} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Homepage" component={Home} />
+            <Stack.Screen name="Cart" component={Cart} />
+            <Stack.Screen name="Products" component={Products} />
+            <Stack.Screen name="ProductDetail" component={ProductDetail} />
+            <Stack.Screen name="Checkout" component={Checkout} />
+            <Stack.Screen name="Orders" component={Orders} />
+            <Stack.Screen name="Address" component={Address} />
+            <Stack.Screen name="Faq" component={Faq} />
+            <Stack.Screen name="Support" component={Support} />
+            <Stack.Screen name="Privacy" component={PrivacyPolicy} />
+            <Stack.Screen name="Setting" component={Settings} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </GestureHandlerRootView>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

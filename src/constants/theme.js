@@ -12,7 +12,28 @@ const COLORS = {
   lightWhite: "#F2F2F2",
   background: "#EDEDED",
 
-  wrapper: "#3a3737cc"
+  wrapper: "#3a3737cc",
+
+  placehoder: "#83829A70",
+
+  // Shared neutrals used across cards, dividers and inputs.
+  // Kept as tokens so every screen draws from the same hairline greys
+  // instead of each file picking its own near-identical hex value.
+  border: "#F0F0F0",
+  divider: "#F5F5F5",
+  softBg: "#F9F9F9",
+
+  // Status colors reused for badges, dots and confirmations.
+  success: "#4CAF50",
+  warning: "#FF9500",
+
+  // Product-card accents: the star-rating badge / discount text green,
+  // its light tint for the "FRESH" tag, and the softer near-black used
+  // for product titles instead of pure black.
+  ratingGreen: "#388e3c",
+  freshTint: "#e8f5e9",
+  titleDark: "#212121",
+  inactiveGray: "#A0A0A0",
 };
 
 const FONT = {
@@ -54,4 +75,9 @@ const SHADOWS = {
   },
 };
 
-export { COLORS, FONT, SIZES, SHADOWS };
+const PADDINGS = {
+  horizonatal: 25,
+  top: 10
+}
+
+export { COLORS, FONT, SIZES, SHADOWS, PADDINGS};

@@ -1,163 +1,146 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, Modal, Pressable, TouchableOpacity, TextInput } from 'react-native'
-import { COLORS, SIZES } from '../../constants'
-import RadioButtonGroup, { RadioButtonItem } from "expo-radio-button";
-import { Entypo, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState } from 'react';
+import {
+    StyleSheet,
+    View,
+    TextInput,
+    Alert,
+} from 'react-native';
+import { COLORS, SIZES } from '../../constants';
+import { FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import PopupShell from './PopupShell';
 
+const BodyItem = ({ icon, placeholder, keyboardtype, value, changeValue }) => {
+    const isMultiline = placeholder === "Address" || placeholder === "Landmark";
 
-const BodyItem = ({icon, placeholder, keyboardtype, value, changeValue}) => {
     return (
         <View style={styles.bodyItem}>
-            {icon}
-            <TextInput 
-                style={styles.input}
+            <View style={styles.iconBox}>
+                {icon}
+            </View>
+            <TextInput
+                style={[styles.input, isMultiline && { textAlignVertical: 'top' }]}
                 placeholder={placeholder}
+                placeholderTextColor={COLORS.placehoder}
                 value={value}
                 onChangeText={changeValue}
                 keyboardType={keyboardtype}
-                multiline={placeholder==="Address"||placeholder==="Landmark"}
-                numberOfLines={placeholder==="Address"||placeholder==="Landmark"?2:1}
+                multiline={isMultiline}
+                numberOfLines={isMultiline ? 3 : 1}
             />
-
         </View>
-    )
-}
+    );
+};
 
-export const AddressPopup = ({closePopup, type, isEmail}) => {
-
+export const AddressPopup = ({ closePopup, type, isEmail, initialValues, onSave }) => {
     const detail = useSelector(state => state.account.detail);
+    const seed = initialValues || {};
 
-    const [name, setName] = useState(detail.name)
-    const [email, setEmail] = useState(detail.email)
-    const [address, setAddress] = useState(detail.address)
-    const [landmark, setLandmark] = useState()
-    const [city, setCity] = useState("")
-    const [phone, setPhone] = useState("")
-    const [pincode, setPincode] = useState("")
+    const [name, setName] = useState(seed.name ?? detail.name);
+    const [email, setEmail] = useState(seed.email ?? detail.email);
+    const [address, setAddress] = useState(seed.address ?? detail.address);
+    const [landmark, setLandmark] = useState(seed.landmark ?? "");
+    const [city, setCity] = useState(seed.city ?? "");
+    const [phone, setPhone] = useState(seed.phone ?? "");
+    const [pincode, setPincode] = useState(seed.pincode ?? "");
+
+    const handleSave = () => {
+        if (!name.trim() || !address.trim()) {
+            Alert.alert("Required Fields", "Name and Address are mandatory.");
+            return;
+        }
+        const result = { name, email, address, landmark, city, phone, pincode };
+        if (onSave) {
+            onSave(result);
+        } else {
+            Alert.alert("Success", "Address Saved");
+        }
+        closePopup();
+    };
 
     return (
-        <Modal animationType='slide'>
-            <View style={styles.container}>
-                <View style={styles.heading}>
-                    <Text style={styles.header}>{type}</Text>
-                    <TouchableOpacity onPress={closePopup}>
-                        <Entypo name='cross' size={24} />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.body}>
-                    <BodyItem 
-                        icon={<Ionicons name="person" size={20} color={COLORS.primary} />}
-                        placeholder="Name"
-                        keyboardtype="default"
-                        value={name}
-                        changeValue={(e) => setName(e.trimStart())}
-                    />
-                    {isEmail && 
-                        <BodyItem 
-                            icon={<Entypo name="email" size={20} color={COLORS.primary} />}
-                            placeholder="Email"
-                            keyboardtype="default"
-                            value={email}
-                            changeValue={(e) => setEmail(e.trim())}
-                        />
-                    }
-                    <BodyItem 
-                        icon={<FontAwesome name="address-book" size={20} color={COLORS.primary} />}
-                        placeholder="Address"
-                        keyboardtype="default"
-                        value={address}
-                        changeValue={(e) => setAddress(e.trimStart())}
-                    />
-                    <BodyItem 
-                        icon={<FontAwesome5 name="landmark" size={20} color={COLORS.primary} />}
-                        placeholder="Landmark"
-                        keyboardtype="default"
-                        value={landmark}
-                        changeValue={(e) => setLandmark(e.trimStart())}
-                    />
-                    <BodyItem 
-                        icon={<FontAwesome5 name="city" size={20} color={COLORS.primary} />}
-                        placeholder="City/Town"
-                        keyboardtype="default"
+        <PopupShell
+            title={type}
+            onClose={closePopup}
+            primaryAction={{ label: 'Save Address', onPress: handleSave }}
+        >
+            <BodyItem
+                icon={<Ionicons name="person" size={20} color={COLORS.primary} />}
+                placeholder="Name"
+                value={name}
+                changeValue={(text) => setName(text.trimStart())}
+            />
+            {isEmail &&
+                <BodyItem
+                    icon={<Ionicons name="mail" size={20} color={COLORS.primary} />}
+                    placeholder="Email"
+                    value={email}
+                    changeValue={(text) => setEmail(text.trim())}
+                />
+            }
+            <BodyItem
+                icon={<FontAwesome name="address-book" size={20} color={COLORS.primary} />}
+                placeholder="Address"
+                value={address}
+                changeValue={(text) => setAddress(text.trimStart())}
+            />
+            <BodyItem
+                icon={<FontAwesome5 name="landmark" size={20} color={COLORS.primary} />}
+                placeholder="Landmark"
+                value={landmark}
+                changeValue={(text) => setLandmark(text.trimStart())}
+            />
+            <View style={styles.row}>
+                <View style={{ flex: 1, marginRight: 10 }}>
+                    <BodyItem
+                        icon={<FontAwesome5 name="city" size={18} color={COLORS.primary} />}
+                        placeholder="City"
                         value={city}
-                        changeValue={(e) => setCity(e.trim())}
+                        changeValue={setCity}
                     />
-                    <BodyItem 
-                        icon={<FontAwesome name="phone" size={20} color={COLORS.primary} />}
-                        placeholder="Phone"
-                        keyboardtype="numeric"
-                        value={phone}
-                        changeValue={(e) => setPhone(e.trim())}
-                    />
-                    <BodyItem 
-                        icon={<FontAwesome5 name="map-pin" size={20} color={COLORS.primary} />}
+                </View>
+                <View style={{ flex: 1 }}>
+                    <BodyItem
+                        icon={<FontAwesome5 name="map-pin" size={18} color={COLORS.primary} />}
                         placeholder="Pincode"
                         keyboardtype="numeric"
                         value={pincode}
-                        changeValue={(e) => setPincode(e.trim())}
+                        changeValue={setPincode}
                     />
                 </View>
-                <View style={styles.bottom}>
-                    <TouchableOpacity>
-                        <Text style={styles.button}>Submit</Text>
-                    </TouchableOpacity>
-                </View>
             </View>
-        </Modal>
-    )
-}
-
+            <BodyItem
+                icon={<FontAwesome name="phone" size={20} color={COLORS.primary} />}
+                placeholder="Phone"
+                keyboardtype="numeric"
+                value={phone}
+                changeValue={setPhone}
+            />
+        </PopupShell>
+    );
+};
 
 const styles = StyleSheet.create({
-    container: { 
-        flex:1, 
-        position: 'relative',
-        backgroundColor:COLORS.background,
-        paddingHorizontal: 35,
-        paddingVertical: 50
-    },
-    heading: {
-        display:'flex',
-        flexDirection:'row',
-        justifyContent: 'space-between',
-        alignItems:'center'
-    },
-    header: {
-        fontSize: 15,
-        fontWeight: 600
-    },
-    body: {
-        paddingVertical: 20
-    },
     bodyItem: {
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
+        flexDirection: 'row',
+        alignItems: 'center',
         borderBottomWidth: 1,
-        borderColor: '#0000080',
-        paddingVertical: 10,
-        marginVertical: 10
+        borderColor: COLORS.divider,
+        paddingVertical: 12,
+        marginVertical: 8
+    },
+    iconBox: {
+        width: 35,
+        alignItems: 'flex-start'
     },
     input: {
-        fontSize: SIZES.medium,
-        width: '85%',
-        opacity: 0.8,
+        flex: 1,
+        fontSize: SIZES.small + 2,
+        color: COLORS.black,
+        fontWeight: '500'
     },
-    bottom: {
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center'
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
-    button: {
-        color: COLORS.white,
-        backgroundColor: COLORS.primary,
-        paddingHorizontal: 35,
-        paddingVertical: 15,
-        fontSize: 15,
-        fontWeight: 600,
-        borderRadius: 3
-    }
-})
+});

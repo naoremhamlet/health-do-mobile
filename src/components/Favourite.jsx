@@ -1,138 +1,331 @@
-import React from 'react'
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import TopHeader from './TopHeader'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { useDispatch, useSelector } from 'react-redux'
-import HorizonatalProduct from './HorizonatalProduct'
-import { COLORS } from '../constants'
-import { SwipeListView } from 'react-native-swipe-list-view'
-import { updateFavourites } from '../store/reducer/favourites'
-import { updateCart } from '../store/reducer/cart'
-import Error from './Error'
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Pressable,
+  TouchableOpacity,
+  LayoutAnimation,
+  Alert,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { useDispatch, useSelector } from 'react-redux';
 
+import TopHeader from './TopHeader';
+import Error from './Error';
 
-function SwipeProduct({ navigation }) {
+import { updateCart } from '../store/reducer/cart';
+import { updateFavourites } from '../store/reducer/favourites';
+import { COLORS, SIZES, SHADOWS, image, PADDINGS } from '../constants';
 
-  const favourites = useSelector(state => state.favourites.favourites)
-  const cart = useSelector(state => state.cart.cart)
-  const dispatch = useDispatch()
+import { getProductById } from "../helper";
 
-  const addToCart = (id) => {
-    if(cart.filter(el => el.id==id).length == 0) {
-      const newCart = [...cart, {id: id, quantity: 1}]
-      dispatch(updateCart(newCart))
-    }
-  }
+const CartItemCard = ({ item }) => {
+  const [expanded, setExpanded] = useState(false);
 
-  const closeRow = (rowMap, id) => {
-    if (rowMap[id]) {
-      rowMap[id].closeRow();
-    }
-  }
-  const deleteItem = (rowMap, id) => {
-    closeRow(rowMap, id)
-    const newFavs = favourites.filter(el => el.id != id)
-    dispatch(updateFavourites(newFavs))
-  }
+  const data = getProductById(item?.id);
 
-  const renderItem = ({ item }) => (
-    <Animated.View style={{ height: 120 }}>
-      <HorizonatalProduct 
-        item={item} 
-        navigation={navigation} />
-    </Animated.View>
-  );
-
-  const renderHiddenItem = (data, rowMap) => {
-    const containInCart = cart.filter(el => el.id==data.item.id).length
-
-    return (
-      <View style={styles.rowBack}>
-        <View style={styles.backRightBtn}>
-          <Pressable style={{ opacity: containInCart? 0.5 : 1}} onPress={() => addToCart(data.item.id)}>
-            <View style={{...styles.buttonIcon, backgroundColor: COLORS.primary}}>
-              <Ionicons name='cart-outline' size={24} color="white" />
-            </View>
-          </Pressable>
-          <Pressable onPress={() => deleteItem(rowMap, data.item.id)}>
-            <View style={{...styles.buttonIcon, backgroundColor: COLORS.red}}>
-              <MaterialCommunityIcons name='delete-outline' size={24} color="white" />
-            </View>
-          </Pressable>
-        </View>
-      </View>
-    )
+  const toggleExpand = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded(!expanded);
   };
 
   return (
-    <View style={styles.favContainer}>
-      <SwipeListView
-        disableRightSwipe
-        data={favourites}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        rightOpenValue={-140}
-        useNativeDriver={false}
-        keyExtractor={item => item.id}
-      />
+    <View style={[styles.card, SHADOWS.small]}>
+      <View style={styles.mainRow}>
+        {/* Product Image */}
+        <Image source={data?.image?.[0]} style={styles.productImg} />
+
+        {/* Content Container */}
+        <View style={styles.contentContainer}>
+          <TouchableOpacity 
+            style={styles.infoSide} 
+            onPress={toggleExpand}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.productName} numberOfLines={1}>{data?.name}</Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.productPrice}>₹{data?.price}</Text>
+              {data?.ingredients && (
+                <View style={styles.detailTrigger}>
+                  <Text style={styles.detailTriggerText}>Details</Text>
+                  <Ionicons 
+                    name={expanded ? "chevron-up" : "chevron-down"} 
+                    size={12} 
+                    color={COLORS.primary} 
+                  />
+                </View>
+              )}
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* EXPANDABLE DETAILS SECTION */}
+      {expanded && data?.ingredients && (
+        <View style={styles.expandedSection}>
+          <View style={styles.divider} />
+          <Text style={styles.ingredientsHeading}>Customized Ingredients:</Text>
+          <View style={styles.ingredientsList}>
+            {data?.ingredients.map((ing, idx) => (
+              <View key={idx} style={styles.ingredientBadge}>
+                <Text style={styles.ingredientText}>{ing}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
     </View>
+  );
+};
+
+function SwipeProduct({ navigation }) {
+  const cart = useSelector((state) => state.cart.cart);
+  const favourites = useSelector((state) => state.favourites.favourites);
+  const dispatch = useDispatch();
+
+  const toggleCart = (id) => {
+    const isInCart = cart.some(el => el.id === id);
+    dispatch(updateCart(isInCart ? cart.filter(el => el.id !== id) : [...cart, { id }]));
+  };
+
+  const deleteItem = (rowMap, id) => {
+    if (rowMap[id]) rowMap[id].closeRow();
+    dispatch(updateFavourites(favourites.filter(el => el.id !== id)));
+  };
+
+  const renderHiddenItem = (data, rowMap) => {
+    const isInCart = cart.some(el => el.id === data.item.id);
+    return (
+      <View style={styles.rowBack}>
+        <View style={styles.backRightBtn}>
+          <Pressable onPress={() => toggleCart(data.item.id)} style={[styles.actionBtn, {backgroundColor: COLORS.primary}, SHADOWS.small]}>
+            <MaterialCommunityIcons name={isInCart ? "cart-check" : "cart-plus"} size={22} color="white" />
+          </Pressable>
+          <Pressable onPress={() => deleteItem(rowMap, data.item.id)} style={[styles.actionBtn, {backgroundColor: COLORS.red}, SHADOWS.small]}>
+            <MaterialCommunityIcons name='delete-outline' size={22} color="white" />
+          </Pressable>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <SwipeListView
+      disableRightSwipe
+      data={favourites}
+      extraData={[cart, favourites]}
+      renderItem={({ item }) => (
+        <View style={styles.cardWrapper}>
+          <CartItemCard item={item} />
+        </View>
+      )}
+      renderHiddenItem={renderHiddenItem}
+      rightOpenValue={-140}
+      keyExtractor={item => `fav-${item.id.toString()}`}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 150 }}
+    />
   );
 }
 
-export default function Favourite({navigation}) {
-  const favourites = useSelector(state => state.favourites.favourites)
+export default function Favourite({ navigation }) {
+  const favourites = useSelector((state) => state.favourites.favourites);
+  const cart = useSelector((state) => state.cart.cart);
+  const dispatch = useDispatch();
+
+  const handleAddAllToCart = () => {
+    const existingIds = new Set(cart.map(c => c.id));
+    const toAdd = favourites.filter(f => !existingIds.has(f.id)).map(f => ({ id: f.id, quantity: 1 }));
+    if (toAdd.length === 0) {
+      Alert.alert('Already in Cart', 'All your favourites are already in the cart.');
+      return;
+    }
+    dispatch(updateCart([...cart, ...toAdd]));
+    Alert.alert('Added to Cart', `${toAdd.length} item${toAdd.length > 1 ? 's' : ''} added to your cart.`);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopHeader title="Favourites" goto={() => navigation.goBack()} />
-      {favourites && favourites.length <= 0 &&
+      <TopHeader 
+        title={favourites?.length > 0 ? `Favourites (${favourites.length})` : "Favourites"}
+        goto={() => navigation.goBack()} 
+        component={favourites && favourites.length > 0 ? (
+          <TouchableOpacity style={[styles.addAllBtn, SHADOWS.small]} onPress={handleAddAllToCart} hitSlop={8}>
+            <MaterialCommunityIcons name="cart-plus" size={18} color={COLORS.primary} />
+          </TouchableOpacity>
+        ) : null}
+      />
+
+      {favourites && favourites.length === 0 ? (
         <Error
-          icon={<MaterialCommunityIcons name="basket-off" size={120} color="#00000025" />}
-          title="No favourites added"
-          desc="Products you mark as favourites appear here."
+          icon={<MaterialCommunityIcons name="heart-broken-outline" size={64} color={COLORS.primary} />}
+          title="Nothing in favourite"
+          desc="Checkout some delicious food and add to favourites!"
+          isButton={true}
+          buttonFunc={() => navigation.navigate("HomeTab")}
+          buttonName="Browse Menu"
         />
-      }
-      {favourites && favourites.length > 0 &&
-        <SwipeProduct navigation={navigation} />
-      }
+      ) : (
+        <View style={{ flex: 1, paddingHorizontal: PADDINGS.horizonatal }}>
+          <View style={styles.swipeHintRow}>
+            <Ionicons name="hand-left-outline" size={13} color={COLORS.gray2} />
+            <Text style={styles.swipeHintText}>Swipe an item left for options</Text>
+          </View>
+          <View style={styles.listWrapper}>
+            <SwipeProduct navigation={navigation} />
+          </View>
+        </View>
+      )}
     </SafeAreaView>
-  )
+  );
 }
 
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingVertical: 50,
-    paddingHorizontal: 35
+  container: { 
+    flex: 1, 
+    backgroundColor: COLORS.softBg,
   },
-  favContainer: {
-    display: 'flex',
-    marginTop: 50
-  },
-  rowBack: {
+  addAllBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: COLORS.white,
+    justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
+  },
+  swipeHintRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingLeft: 15,
-  },
-  backRightBtn: {
     alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 0,
-    display: 'flex',
-    flexDirection: 'row'
+    gap: 5,
+    marginTop: 18,
+    marginBottom: 4,
+    paddingHorizontal: 4,
   },
-  buttonIcon: {
-    width: 45,
-    height: 45,
-    borderRadius: 30,
-    display: 'flex',
-    justifyContent: 'center',
+  swipeHintText: {
+    fontSize: SIZES.xSmall,
+    color: COLORS.gray2,
+    fontWeight: '600',
+  },
+  listWrapper: { 
+    flex: 1, 
+    marginTop: 8 
+  },
+  cardWrapper: { 
+    paddingVertical: 10, 
+  },
+  
+  card: {
+    backgroundColor: COLORS.white,
+    borderRadius: 25,
+    padding: 12,
+  },
+  mainRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 17
-  }
-})
+  },
+  productImg: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: COLORS.lightWhite,
+  },
+  contentContainer: {
+    flex: 1,
+    marginLeft: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  infoSide: { flex: 1, paddingRight: 10 },
+  productName: { 
+    fontSize: SIZES.small, 
+    fontWeight: '900', 
+    color: COLORS.black 
+  },
+  priceContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginTop: 2 
+  },
+  productPrice: { 
+    fontSize: SIZES.small, 
+    fontWeight: '900', 
+    color: COLORS.primary 
+  },
+  
+  detailTrigger: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginLeft: 10,
+    backgroundColor: COLORS.primary + '15',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 5
+  },
+  detailTriggerText: { 
+    fontSize: SIZES.xSmall, 
+    fontWeight: '700', color: 
+    COLORS.primary, marginRight: 2 
+  },
+
+  // --- EXPANDED SECTION STYLES ---
+  expandedSection: {
+    marginTop: 5,
+    paddingHorizontal: 5,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.lightWhite,
+    marginVertical: 10,
+  },
+  ingredientsHeading: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.gray,
+    marginBottom: 8,
+  },
+  ingredientsList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  ingredientBadge: {
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginRight: 6,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: COLORS.gray2 + '30',
+  },
+  ingredientText: {
+    fontSize: 10,
+    color: COLORS.black,
+    fontWeight: '500',
+  },
+
+  // Swipe & Actions
+  rowBack: { 
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'flex-end', 
+    alignItems: 'center', 
+    paddingRight: 25
+  },
+  backRightBtn: { 
+    flexDirection: 'row',
+    paddingRight: PADDINGS.horizonatal + 5
+  },
+  actionBtn: { 
+    width: 45, 
+    height: 45, 
+    borderRadius: 15, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    marginLeft: 12 
+  },
+});

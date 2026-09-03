@@ -1,13 +1,15 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import CustomButton from './CustomButton'
-import { SIZES } from '../constants'
+import { COLORS, SIZES } from '../constants'
 
 export default function Error({ icon, title, desc, isButton, buttonFunc, buttonName }) {
   return (
     <View style={styles.container}>
         <View style={styles.content}>
-            {icon}
+            <View style={styles.iconBackdrop}>
+                {icon}
+            </View>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.desc}>{desc}</Text>
 
@@ -28,10 +30,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    iconBackdrop: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        backgroundColor: COLORS.softBg,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     title: {
         fontSize: SIZES.xLarge,
-        fontWeight: 900,
-        marginTop: 20
+        fontWeight: '900',
+        marginTop: 24
     },
     desc: {
         fontSize: SIZES.medium,

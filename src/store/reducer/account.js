@@ -1,14 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const accountSlice = createSlice({
-    name: 'cart',
+    name: 'account',
     initialState: {
         id: null,
         detail: {
             name: "",
             phone: "",
             email: "",
-            address: ""
+            address: "",
+            profileImage: null,
+            age: null,
+            sex: null
         }
     },
     reducers: {
